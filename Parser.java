@@ -125,43 +125,4 @@ public class Parser {
 
         sc.close();
     }
-
-    public void printData() {
-        System.out.println("====== PARSED DATA ======");
-        System.out.println("Videos: " + NUMBER_OF_VIDEOS + ", Endpoints: " + NUMBER_OF_ENDPOINTS 
-                + ", Requests: " + NUMBER_OF_REQUESTS + ", Caches: " + NUMBER_OF_CACHES 
-                + ", Cache Capacity: " + CACHE_CAPACITY + "MB");
-        
-        System.out.print("Video sizes (MB): ");
-        for (int size : video_sizes) System.out.print(size + " ");
-        System.out.println("\n");
-        
-        System.out.println("--- Endpoints ---");
-        for (int i = 0; i < endpoints_data_latency.length; i++) {
-            System.out.print("E" + i + " -> DataCenter Latency: " + endpoints_data_latency[i] + "ms");
-            System.out.print(" | Connected Caches: ");
-            for (int[] connection : endpoints_to_caches.get(i)) {
-                System.out.print("[C" + connection[0] + ", " + connection[1] + "ms] ");
-            }
-            System.out.println();
-        }
-        
-        System.out.println("\n--- Requests ---");
-        for (Request req : requests) {
-            System.out.println(req.numRequests + " requests for Video " + req.videoId + " from Endpoint " + req.endpointId);
-        }
-        System.out.println("=========================");
-    }
-
-    public static void main(String[] args) {
-        Parser parser = new Parser();
-        
-        long startTime = System.currentTimeMillis();
-        parser.parse("example.txt");
-        long endTime = System.currentTimeMillis();
-        
-        parser.printData();
-        
-        System.out.println("Temps d'exécution du parsing : " + (endTime - startTime) + " ms");
-    }
 }
