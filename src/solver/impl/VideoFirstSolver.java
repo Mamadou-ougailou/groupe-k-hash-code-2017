@@ -14,13 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * Video-first greedy solver.
- *
- * Strategy: Rank all videos by their global potential gain per unit size,
- * then for each video greedily place it into the best cache(s) one at a time.
- * Tracks already-served endpoints per video to avoid double-counting gains.
- */
+
 public class VideoFirstSolver implements Solver {
 
     // Key: "endpointId-videoId", Value: best latency seen so far for that pair

@@ -14,22 +14,10 @@ import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Set;
 
-/**
- * Greedy global solver with lazy evaluation.
- *
- * Strategy: Consider ALL (video, cache) pairs at once, ranked by marginal gain
- * per unit size in a max-heap. Use lazy evaluation to avoid recomputing all
- * gains after each placement — only recompute when an element is popped and
- * its timestamp is stale.
- */
 public class GreedySolver implements Solver {
 
-    // Key: "endpointId-videoId", Value: best latency seen so far for that pair
     private Map<String, Integer> bestLatencySoFar;
-
-    // Reverse map: video -> list of (endpoint, nbRequests)
     private Map<Video, List<EndpointRequest>> videoToRequests;
-
     // Global iteration counter — incremented after each placement
     private int iteration;
 
@@ -122,10 +110,6 @@ public class GreedySolver implements Solver {
         }
     }
 
-    /**
-     * Computes the current marginal gain of placing video in cache,
-     * considering the current state of best_latency_so_far.
-     */
     private long computeMarginalGain(Video video, Cache cache) {
         long gain = 0;
         List<EndpointRequest> requests = videoToRequests.get(video);
@@ -152,11 +136,6 @@ public class GreedySolver implements Solver {
         return (long) video.getId() * numCaches + cache.getId();
     }
 
-    /**
-     * Max-heap entry: stores a (video, cache) pair with its gain/size ratio
-     * and a timestamp indicating when the ratio was last computed.
-     * PriorityQueue is a min-heap by default, so we reverse the comparison.
-     */
     private static class HeapEntry implements Comparable<HeapEntry> {
         final double ratio;
         final Video video;
@@ -177,7 +156,6 @@ public class GreedySolver implements Solver {
         }
     }
 
-    /** Pairs an endpoint with the number of requests it makes for a video. */
     private static class EndpointRequest {
         final Endpoint endpoint;
         final int nbRequests;

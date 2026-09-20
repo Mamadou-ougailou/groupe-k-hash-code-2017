@@ -29,7 +29,7 @@ public class GoogleHash2017 {
         }
 
         // 2. Run Solver (Developers can plug in their own solvers here)
-        Solver solver = new GreedySolver();
+        Solver solver = new solver.impl.GreedyCELFSolver();
         System.out.println("Running GreedySolver...");
         solver.solve(problem);
 
