@@ -2,6 +2,8 @@
 
 import model.Problem;
 import io.Parser;
+import solver.ScoreCalculator;
+import solver.impl.GreedySolver;
 import solver.Solver;
 
 public class GoogleHash2017 {
@@ -26,25 +28,17 @@ public class GoogleHash2017 {
             return;
         }
 
-        System.out.println("Successfully parsed problem!");
-        System.out.println("Number of videos: " + problem.getVideos().size());
-        System.out.println("Number of endpoints: " + problem.getEndpoints().size());
-        System.out.println("Number of caches: " + problem.getCaches().size());
-        System.out.println("Number of request descriptions: " + problem.getRequests().size());
-
         // 2. Run Solver (Developers can plug in their own solvers here)
-        Solver solver = new Solver() {
-            @Override
-            public void solve(Problem p) {
-                // TODO: Implement solving logic
-                System.out.println("Running Dummy Solver...");
-            }
-        };
-
+        Solver solver = new GreedySolver();
+        System.out.println("Running GreedySolver...");
         solver.solve(problem);
 
-        // 3. Output results
-        io.OutputWriter writer = new io.OutputWriter();
-        writer.writeToConsole(problem);
+        // 3. Calculate and display the score
+        long score = ScoreCalculator.compute(problem);
+        System.out.println("Score: " + score);
+
+        // 4. Output results
+        // io.OutputWriter writer = new io.OutputWriter();
+        // writer.writeToConsole(problem);
     }
 }

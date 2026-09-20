@@ -49,7 +49,10 @@ public class Parser {
             for (int j = 0; j < numConnectedCaches; j++) {
                 int cacheId = sc.nextInt();
                 int latency = sc.nextInt();
-                endpoint.addCacheConnection(caches.get(cacheId), latency);
+                Cache cache = caches.get(cacheId);
+                endpoint.addCacheConnection(cache, latency);
+                // Reverse mapping: let the cache know about this endpoint
+                cache.addEndpointConnection(endpoint, latency);
             }
             endpoints.add(endpoint);
         }
@@ -64,6 +67,8 @@ public class Parser {
             Video video = videos.get(videoId);
             Endpoint endpoint = endpoints.get(endpointId);
             requests.add(new RequestDescription(video, endpoint, numRequests));
+            // Populate endpoint's requested videos map
+            endpoint.addVideoRequest(video, numRequests);
         }
 
         sc.close();
