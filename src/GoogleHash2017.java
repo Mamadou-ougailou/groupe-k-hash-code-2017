@@ -44,7 +44,7 @@ public class GoogleHash2017 {
 
 
         // 4. Output results to file
-        io.OutputWriter writer = new io.OutputWriter();
+        OutputWriter writer = new OutputWriter();
         try {
             writer.writeToFile(problem, outputFilePath);
             System.out.println("Saved solution to: " + outputFilePath);

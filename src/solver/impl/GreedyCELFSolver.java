@@ -136,8 +136,6 @@ public class GreedyCELFSolver implements Solver {
         for (int i = (heapSize >>> 1) - 1; i >= 0; i--)
             SolverUtil.siftDown(heapKey, heapVal, heapSize, i);
 
-        gain = null; // free
-
         // ---- 3. CELF greedy loop ----
         while (heapSize > 0) {
             int pid = heapVal[0];

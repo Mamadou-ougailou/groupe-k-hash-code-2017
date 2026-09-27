@@ -9,7 +9,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class OutputWriter {
 
@@ -19,7 +18,7 @@ public class OutputWriter {
     public void writeToConsole(Problem problem) {
         List<Cache> usedCaches = problem.getCaches().stream()
                 .filter(c -> !c.getCachedVideos().isEmpty())
-                .collect(Collectors.toList());
+                .toList();
 
         System.out.println(usedCaches.size());
 
@@ -29,7 +28,7 @@ public class OutputWriter {
             for (Video video : cache.getCachedVideos()) {
                 sb.append(" ").append(video.getId());
             }
-            System.out.println(sb.toString());
+            System.out.println(sb);
         }
     }
 
@@ -40,7 +39,7 @@ public class OutputWriter {
     public void writeToFile(Problem problem, String filePath) throws IOException {
         List<Cache> usedCaches = problem.getCaches().stream()
                 .filter(c -> !c.getCachedVideos().isEmpty())
-                .collect(Collectors.toList());
+                .toList();
 
         File outputFile = new File(filePath);
         File parentDir = outputFile.getParentFile();
