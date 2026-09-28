@@ -6,26 +6,12 @@ import model.Problem;
 import model.RequestDescription;
 import model.Video;
 import solver.Solver;
+import solver.SolverUtil;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-/**
- * Glouton paresseux CELF (Cost-Effective Lazy Forward).
- *
- * Port exact de l'algorithme haute performance vers le modèle objet
- * du projet (Problem/Cache/Endpoint/Video).
- *
- * Différences clés par rapport au GreedySolver naïf :
- *   1. Carnet best1/best2/arg1 par requête → évaluation O(1)
- *   2. Tas binaire max sur tableaux primitifs → zéro autoboxing
- *   3. Vraie CELF : on recalcule TOUJOURS le sommet, puis on compare
- *      au suivant. Si le gain recalculé domine, c'est le vrai max ;
- *      sinon on repousse. Résultat IDENTIQUE au glouton naïf.
- *   4. Structures internes aplaties en int[] pour la vitesse.
- */
+
 public class GreedyCELFSolver implements Solver {
 
     @Override
@@ -148,14 +134,12 @@ public class GreedyCELFSolver implements Solver {
         }
         // O(n) heapify
         for (int i = (heapSize >>> 1) - 1; i >= 0; i--)
-            siftDown(heapKey, heapVal, heapSize, i);
-
-        gain = null; // free
+            SolverUtil.siftDown(heapKey, heapVal, heapSize, i);
 
         // ---- 3. CELF greedy loop ----
         while (heapSize > 0) {
             int pid = heapVal[0];
-            heapPop(heapKey, heapVal, heapSize);
+            SolverUtil.heapPop(heapKey, heapVal, heapSize);
             heapSize--;
 
             int c = pid / V, v = pid - c * V;
@@ -199,7 +183,7 @@ public class GreedyCELFSolver implements Solver {
                 }
             } else {
                 // Stale: push back with recomputed gain
-                heapPush(heapKey, heapVal, heapSize, nk, pid);
+                SolverUtil.heapPush(heapKey, heapVal, heapSize, nk, pid);
                 heapSize++;
             }
         }
@@ -215,46 +199,5 @@ public class GreedyCELFSolver implements Solver {
         }
     }
 
-    // ---- Max-heap on primitive arrays (no autoboxing) ----
 
-    private static void siftDown(double[] key, int[] val, int n, int i) {
-        double k = key[i]; int v = val[i];
-        int half = n >>> 1;
-        while (i < half) {
-            int ch = (i << 1) + 1, right = ch + 1;
-            if (right < n && key[right] > key[ch]) ch = right;
-            if (key[ch] <= k) break;
-            key[i] = key[ch]; val[i] = val[ch]; i = ch;
-        }
-        key[i] = k; val[i] = v;
-    }
-
-    private static void siftUp(double[] key, int[] val, int i) {
-        double k = key[i]; int v = val[i];
-        while (i > 0) {
-            int p = (i - 1) >>> 1;
-            if (key[p] >= k) break;
-            key[i] = key[p]; val[i] = val[p]; i = p;
-        }
-        key[i] = k; val[i] = v;
-    }
-
-    private static void heapPop(double[] key, int[] val, int n) {
-        n--;
-        key[0] = key[n]; val[0] = val[n];
-        if (n > 0) siftDown(key, val, n, 0);
-    }
-
-    private static void heapPush(double[] key, int[] val, int n, double k, int v) {
-        // Grow if needed
-        if (n >= key.length) {
-            int cap = key.length + (key.length >> 1) + 16;
-            double[] a = new double[cap]; System.arraycopy(key, 0, a, 0, n);
-            int[] b = new int[cap];       System.arraycopy(val, 0, b, 0, n);
-            // Can't resize in-place with static methods, but push-backs are rare
-            // and the initial array is sized for all candidates
-        }
-        key[n] = k; val[n] = v;
-        siftUp(key, val, n);
-    }
 }

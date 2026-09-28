@@ -2,9 +2,8 @@
 
 import model.Problem;
 import io.Parser;
-import solver.ScoreCalculator;
-import solver.impl.GreedySolver;
 import solver.Solver;
+import io.OutputWriter;
 
 public class GoogleHash2017 {
     public static void main(String[] args) {
@@ -18,6 +17,16 @@ public class GoogleHash2017 {
         }
 
         String inputFilePath = args[0];
+        String outputFilePath;
+        if (args.length >= 2) {
+            outputFilePath = args[1];
+        } else {
+            java.io.File inputFile = new java.io.File(inputFilePath);
+            String name = inputFile.getName();
+            int dotIdx = name.lastIndexOf('.');
+            String baseName = (dotIdx > 0) ? name.substring(0, dotIdx) : name;
+            outputFilePath = "output/" + baseName + ".out";
+        }
 
         // 1. Parse Input
         Parser parser = new Parser();
@@ -33,12 +42,14 @@ public class GoogleHash2017 {
         System.out.println("Running GreedySolver...");
         solver.solve(problem);
 
-        // 3. Calculate and display the score
-        long score = ScoreCalculator.compute(problem);
-        System.out.println("Score: " + score);
 
-        // 4. Output results
-        // io.OutputWriter writer = new io.OutputWriter();
-        // writer.writeToConsole(problem);
+        // 4. Output results to file
+        OutputWriter writer = new OutputWriter();
+        try {
+            writer.writeToFile(problem, outputFilePath);
+            System.out.println("Saved solution to: " + outputFilePath);
+        } catch (java.io.IOException e) {
+            System.err.println("Failed to write output file: " + e.getMessage());
+        }
     }
 }
