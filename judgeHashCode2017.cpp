@@ -117,7 +117,7 @@ int main(int argc, char *argv[]) {
 
   /* Compute score */
   long long score = 0;
-  int totalRequest = 0;
+  long long totalRequest = 0;
   for (int i = 0; i < nbRequest; i++) {
     int endpoint = requests[i].endpoint;
     int video = requests[i].video;
