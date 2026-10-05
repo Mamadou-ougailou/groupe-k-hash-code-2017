@@ -31,7 +31,7 @@ all: compile judge
 # Compile Java solver classes
 compile:
 	@$(call MKDIR,$(OUT_DIR))
-	$(JAVAC) -d $(OUT_DIR) src/GoogleHash2017.java src/model/*.java src/io/*.java src/solver/*.java src/solver/impl/*.java
+	$(JAVAC) -d $(OUT_DIR) src/GoogleHash2017.java src/model/*.java src/io/*.java src/solver/*.java src/solver/impl/*.java src/solver/ils/*.java
 
 # Compile C++ judge
 judge: $(TARGET_JUDGE)
