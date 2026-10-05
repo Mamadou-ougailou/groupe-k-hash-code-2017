@@ -20,24 +20,24 @@ JAVA        = java
 CXX         = g++
 CXXFLAGS    = -O3
 
-OUT_DIR     = out
-OUTPUT_DIR  = output
+OUT_DIR      = out
+OUTPUT_DIR   = output
 TARGET_JUDGE = judge$(EXE)
 
-.PHONY: all compile judge clean FORCE
+.PHONY: all compile judge generate dashboard pipeline run clean FORCE
 
 all: compile judge
 
 # Compile Java solver classes
 compile:
 	@$(call MKDIR,$(OUT_DIR))
-	$(JAVAC) -d $(OUT_DIR) src/GoogleHash2017.java src/model/*.java src/io/*.java src/solver/*.java src/solver/impl/*.java
+	$(JAVAC) -d $(OUT_DIR) src/GoogleHash2017.java src/model/*.java src/io/*.java src/solver/*.java src/solver/impl/*.java src/solver/ils/*.java
 
 # Compile C++ judge
 judge: $(TARGET_JUDGE)
 
 $(TARGET_JUDGE): judgeHashCode2017.cpp
-	$(CXX) $(CXXFLAGS) judgeHashCode2017.cpp -o judge
+	$(CXX) $(CXXFLAGS) judgeHashCode2017.cpp -o $(TARGET_JUDGE)
 
 # Rule to run solver and judge on an instance:
 # Usage: make instances/filename.in (e.g. make instances/me_at_the_zoo.in)
@@ -46,10 +46,39 @@ instances/%.in: FORCE compile judge
 	$(JAVA) -cp $(OUT_DIR) GoogleHash2017 $@ $(OUTPUT_DIR)/$*.out
 	@echo ----------------------------------------
 	@echo Running Official Judge:
-	@.\judge$(EXE) $@ $(OUTPUT_DIR)/$*.out
+	@$(TARGET_JUDGE) $@ $(OUTPUT_DIR)/$*.out
 	@echo ----------------------------------------
 
+# ── Python tooling ─────────────────────────────────────────────────────────────
+
+# Generate a custom instance (default: dejaVu generator, seed 42)
+# Override: make generate GENERATOR=universalLambda SEED=123
+GENERATOR ?= dejaVu
+SEED      ?= 42
+
+generate:
+	python tools/instance_creator/instanceCreator.py --generator $(GENERATOR) --seed $(SEED)
+
+# Launch the analysis dashboard at http://127.0.0.1:8765
+# Must be run from the project root so that `python -m tools.dashboard.dashboard` resolves correctly.
+dashboard:
+	python -m tools.dashboard.dashboard
+
+# Full pipeline: generate → validate → compile → solve → judge [→ dashboard]
+# Override: make pipeline GENERATOR=universalLambda SEED=7 DASHBOARD=--dashboard
+DASHBOARD ?=
+pipeline:
+	python tools/pipeline.py --generator $(GENERATOR) --seed $(SEED) $(DASHBOARD)
+
+# Pipeline on an existing instance (no generation step)
+# Usage: make run INSTANCE=instances/me_at_the_zoo.in
+# Add DASHBOARD=--dashboard to also open the dashboard.
+run:
+	python tools/pipeline.py --instance $(INSTANCE) $(DASHBOARD)
+
+# ── Maintenance ────────────────────────────────────────────────────────────────
 clean:
 	@$(call RMDIR,$(OUT_DIR))
 	@$(call RMDIR,$(OUTPUT_DIR))
+	@$(call RMDIR,web_cache)
 	@$(call RM,$(TARGET_JUDGE))
