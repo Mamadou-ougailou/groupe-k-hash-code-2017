@@ -126,7 +126,16 @@ public final class BlockKnapsack {
      * Vide le cache c, puis le remplit de maniere OPTIMALE etant donne
      * le contenu fige de tous les autres caches.
      */
-    public void optimizeCache(int c) {
+    public void optimizeCache(int c) { optimizeCache(c, 0.0, null); }
+
+    /**
+     * Variante bruitee (diversification de l'ILS) : chaque gain est multiplie
+     * par un facteur aleatoire dans [1 - noise, 1 + noise] avant le sac a dos.
+     * Le contenu obtenu est optimal pour les valeurs bruitees, pas pour les
+     * vraies : le score peut baisser, c'est la reparation exacte qui suit
+     * (optimizeCache sans bruit) qui decide si le kick est garde.
+     */
+    public void optimizeCache(int c, double noise, java.util.Random rng) {
         final int V = in.V, X = in.X;
         final int[] size = in.videoSize;
 
@@ -144,6 +153,11 @@ public final class BlockKnapsack {
                 int d = best1[r] - l;
                 if (d > 0) gain[rv[r]] += (long) rn[r] * d;
             }
+        }
+        if (noise > 0) {
+            for (int v = 0; v < V; v++)
+                if (gain[v] > 0)
+                    gain[v] = Math.max(1L, (long) (gain[v] * (1.0 + noise * (2 * rng.nextDouble() - 1))));
         }
 
         /* --- 3. Objets, tries par ratio gain/taille decroissant ------------

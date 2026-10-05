@@ -58,6 +58,7 @@ public class ILSSolver implements Solver {
             System.out.println("  structure degeneree -> bin-packing exact");
             sol = BinPacking.solve(in, budgetS * 1000L, true);
         } else {
+            final long end = System.nanoTime() + budgetS * 1_000_000_000L;
             Book book = new Book(in);
             sol = Greedy.run(in, book, false);
             sol.validateOrThrow();
@@ -67,7 +68,7 @@ public class ILSSolver implements Solver {
 
             BlockKnapsack bk = new BlockKnapsack(in, sol, book);
             long desc = ILS.descend(in, sol, book, bk, new Random(1),
-                    System.nanoTime() + budgetS * 1_000_000_000L / 3, 30, false);
+                    System.nanoTime() + (end - System.nanoTime()) / 3, 30, false);
             sol.validateOrThrow();
             long descScore = Scorer.score(in, sol);
             check(desc, descScore, "descente");
@@ -77,7 +78,8 @@ public class ILSSolver implements Solver {
 
             ILS.Result res;
             try {
-                res = ILS.runParallel(in, sol, budgetS * 2000L / 3, threads, true);
+                // l'ILS recupere tout le temps que la descente n'a pas utilise
+                res = ILS.runParallel(in, sol, Math.max(1, (end - System.nanoTime()) / 1_000_000L), threads, true);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 throw new IllegalStateException("ILS interrompu", e);

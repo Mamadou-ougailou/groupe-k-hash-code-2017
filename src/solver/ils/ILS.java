@@ -143,10 +143,17 @@ public final class ILS {
     }
 
     /** Parametres du voisinage de perturbation. */
-    public static int KICK_MAX = 2;      // nombre max de caches vides a chaque kick
-    public static int LOCAL    = 6;      // nombre de caches re-optimises a chaque kick
+    public static int KICK_MAX = Integer.getInteger("ils.kick", 3);      // nombre max de caches vides a chaque kick
+    public static int LOCAL    = Integer.getInteger("ils.local", 3);      // nombre de caches re-optimises a chaque kick
     /** Temperature relative (Metropolis) : un kick moins bon de d est accepte avec proba exp(-d / (TEMP*score)). */
-    public static double TEMP  = 2e-5;
+    public static double TEMP  = Double.parseDouble(System.getProperty("ils.temp", "0"));
+    /**
+     * Bruit relatif de la reconstruction diversifiante : apres avoir vide les caches
+     * du kick, on les remplit avec des gains perturbes de +-NOISE, puis on repare
+     * exactement (REPAIR passes). 0 = reconstruction exacte directe (ancien comportement).
+     */
+    public static double NOISE = Double.parseDouble(System.getProperty("ils.noise", "0.2"));
+    public static int REPAIR   = Integer.getInteger("ils.repair", 2);
 
     /**
      * Descente + perturbations iterees, dans un budget de temps.
@@ -294,9 +301,17 @@ public final class ILS {
             /* --- Journal, perturbation, reconstruction ----------------------- */
             for (int i = 0; i < n; i++) snapN[i] = bk.snapshot(set[i], snap[i]);
             for (int i = 0; i < nKick; i++) bk.clearCacheAndUpdate(set[i]);
+            if (NOISE > 0) {
+                /* Reconstruction bruitee des caches vides, puis reparation exacte. */
+                System.arraycopy(set, 0, ord, 0, nKick);
+                shuffle(ord, nKick, rng);
+                for (int i = 0; i < nKick; i++) bk.optimizeCache(ord[i], NOISE, rng);
+            }
             System.arraycopy(set, 0, ord, 0, n);     // set[] reste aligne sur le journal
-            shuffle(ord, n, rng);
-            bk.sweep(ord, n, Long.MAX_VALUE);
+            for (int rep = 0; rep < (NOISE > 0 ? REPAIR : 1); rep++) {
+                shuffle(ord, n, rng);
+                bk.sweep(ord, n, Long.MAX_VALUE);
+            }
             sweeps++;
             long now = book.score();
 
