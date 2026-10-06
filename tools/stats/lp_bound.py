@@ -72,8 +72,32 @@ def build(inst: Instance):
     return uniq, counts, pair_video, pair_endpoint, x_index, y_rows, ep_bounds, order
 
 
+def estimate_size(inst: Instance) -> tuple[int, int]:
+    """Majore le nombre de variables SANS rien construire.
+
+    La verification doit preceder la construction : sur kittens, batir les
+    structures avant de verifier consomme 8,8 Go pour finalement refuser.
+    """
+    pair_id = inst.req_video * inst.E + inst.req_endpoint
+    uniq = np.unique(pair_id)
+    pair_endpoint = (uniq % inst.E).astype(np.int64)
+    ny = int(inst.degrees[pair_endpoint].sum())
+    nx = min(inst.C * inst.V, ny)
+    return nx, ny
+
+
 def compute(inst: Instance, max_vars: int = 4_000_000, verbose: bool = False) -> dict:
     t0 = time.perf_counter()
+
+    nx_est, ny_est = estimate_size(inst)
+    if nx_est + ny_est > max_vars:
+        return {
+            "resolu": False,
+            "raison": (f"environ {nx_est + ny_est:,} variables (x<={nx_est:,}, y={ny_est:,}) "
+                       f"au-dela de la limite {max_vars:,} — rien n'a ete construit"),
+            "borne_lp": None,
+        }
+
     uniq, counts, pair_video, pair_endpoint, x_index, y_rows, _, _ = build(inst)
 
     nx = len(x_index)

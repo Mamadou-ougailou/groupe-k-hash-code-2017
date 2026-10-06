@@ -91,16 +91,62 @@ def compute(inst: Instance) -> dict:
     total = inst.total_requests
     loose = ceiling.compute(inst)["plafond_score"]
     fractional = int(total_fractional * 1000 // total)
-    tight = min(loose, fractional)
+    supercache = supercache_bound(inst)
+    tight = min(loose, fractional, supercache)
 
     return {
         "borne_serree": tight,
         "borne_lache": loose,
         "borne_fractionnaire": fractional,
+        "borne_cache_unique": supercache,
         "resserrement": round(1 - tight / loose, 4) if loose else 0.0,
-        "capacite_limitante": bool(fractional < loose),
+        "capacite_limitante": bool(tight < loose),
         "facteur_surcomptage": round(fractional / loose, 2) if loose else 0.0,
     }
+
+
+def supercache_bound(inst: Instance) -> int:
+    """Relaxation "cache unique" : tous les caches fusionnes en un seul de
+    capacite C*X, chaque endpoint servi a sa meilleure latence connectee.
+
+    C'est strictement plus permissif que le probleme reel — une video posee une
+    seule fois y sert tous les endpoints au mieux, la ou il faudrait la
+    dupliquer — donc l'optimum de cette relaxation majore l'optimum reel.
+
+    Contrairement a la somme par cache, elle ne surcompte pas, et contrairement
+    au plafond de ceiling.py elle tient compte de la capacite totale. C'est la
+    seule des trois qui reste calculable sur les instances tres connectees.
+    """
+    huge = np.iinfo(np.int64).max
+    best = np.full(inst.E, huge, dtype=np.int64)
+    if inst.ep_lat.size:
+        rows = np.repeat(np.arange(inst.E), inst.degrees)
+        np.minimum.at(best, rows, inst.ep_lat)
+    saving = inst.dc - np.minimum(inst.dc, best)
+
+    value = np.zeros(inst.V, dtype=np.float64)
+    np.add.at(value, inst.req_video, inst.req_count * saving[inst.req_endpoint])
+
+    useful = value > 0
+    if not useful.any():
+        return 0
+    vals = value[useful]
+    wts = inst.sizes[useful].astype(np.float64)
+    rank = np.argsort(-(vals / wts), kind="stable")
+    vals, wts = vals[rank], wts[rank]
+
+    capacity = float(inst.C) * float(inst.X)
+    cumulative = np.cumsum(wts)
+    fits = cumulative <= capacity
+    taken = float(vals[fits].sum())
+    n_full = int(fits.sum())
+    if n_full < vals.size:
+        used = float(cumulative[n_full - 1]) if n_full else 0.0
+        remaining = capacity - used
+        if remaining > 0:
+            taken += float(vals[n_full]) * remaining / float(wts[n_full])
+
+    return int(taken * 1000 // inst.total_requests)
 
 
 if __name__ == "__main__":
