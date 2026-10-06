@@ -140,7 +140,7 @@ def step_compile() -> bool:
 
     # Collect all .java source files
     java_files = [PROJECT_ROOT / "src" / "GoogleHash2017.java"]
-    for subdir in ("model", "io", "solver", "solver/impl"):
+    for subdir in ("model", "io", "solver", "solver/impl", "solver/ils"):
         src_dir = PROJECT_ROOT / "src" / subdir
         if src_dir.is_dir():
             java_files.extend(sorted(src_dir.glob("*.java")))

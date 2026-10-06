@@ -26,8 +26,13 @@ import java.util.Random;
  *   ou bin-packing exact si l'instance est degeneree (trending_today).
  *
  * Reglages (proprietes systeme) :
- *   -Dils.seconds=60   budget total en secondes
- *   -Dils.threads=N    threads pour l'ILS (defaut : coeurs - 2)
+ *   -Dils.seconds=60        budget total en secondes
+ *   -Dils.threads=N         threads pour l'ILS (defaut : coeurs - 2)
+ *   -Dils.descentShare=0.33 part du budget laissee a la descente par blocs
+ *   -Dils.sweeps=30         passes maximum de la descente
+ *   -Dils.trace=chemin.json trace machine de l'execution (scores par phase, kicks)
+ *
+ * Voir aussi ILS.KICK_MAX, LOCAL, TEMP, NOISE, REPAIR (prefixe ils.).
  *
  * Chaque etape est verifiee : capacite respectee ET score incremental == scorer independant.
  */
@@ -35,6 +40,9 @@ public class ILSSolver implements Solver {
 
     private final long budgetS;
     private final int threads;
+    private final double descentShare;
+    private final int maxSweeps;
+    private final String tracePath;
 
     public ILSSolver() {
         this(Long.getLong("ils.seconds", 60),
@@ -44,6 +52,9 @@ public class ILSSolver implements Solver {
     public ILSSolver(long budgetS, int threads) {
         this.budgetS = budgetS;
         this.threads = threads;
+        this.descentShare = Double.parseDouble(System.getProperty("ils.descentShare", "0.3333"));
+        this.maxSweeps = Integer.getInteger("ils.sweeps", 30);
+        this.tracePath = System.getProperty("ils.trace");
     }
 
     @Override
@@ -53,10 +64,15 @@ public class ILSSolver implements Solver {
         System.out.print("  "); in.printSummary();
         long ub = Scorer.upperBound(in);
 
+        Trace trace = new Trace(in, ub, budgetS, threads, descentShare, maxSweeps);
+        long t0 = System.nanoTime();
+
         Solution sol;
         if (BinPacking.isDegenerate(in)) {
             System.out.println("  structure degeneree -> bin-packing exact");
+            trace.degenerate = true;
             sol = BinPacking.solve(in, budgetS * 1000L, true);
+            trace.phase("bin-packing", Scorer.score(in, sol), t0);
         } else {
             final long end = System.nanoTime() + budgetS * 1_000_000_000L;
             Book book = new Book(in);
@@ -65,16 +81,20 @@ public class ILSSolver implements Solver {
             long greedy = Scorer.score(in, sol);
             check(book.score(), greedy, "glouton");
             System.out.printf("  [1] glouton           = %,d%n", greedy);
+            long tGreedy = trace.phase("glouton", greedy, t0);
 
             BlockKnapsack bk = new BlockKnapsack(in, sol, book);
+            long descentDeadline = System.nanoTime()
+                    + (long) ((end - System.nanoTime()) * descentShare);
             long desc = ILS.descend(in, sol, book, bk, new Random(1),
-                    System.nanoTime() + (end - System.nanoTime()) / 3, 30, false);
+                    descentDeadline, maxSweeps, false);
             sol.validateOrThrow();
             long descScore = Scorer.score(in, sol);
             check(desc, descScore, "descente");
             if (descScore < greedy)
                 throw new IllegalStateException("MONOTONIE VIOLEE : " + greedy + " -> " + descScore);
             System.out.printf("  [3] + sac a dos exact = %,d%n", descScore);
+            long tDescent = trace.phase("descente", descScore, tGreedy);
 
             ILS.Result res;
             try {
@@ -89,11 +109,17 @@ public class ILSSolver implements Solver {
             check(res.score, ilsScore, "ILS");
             if (ilsScore >= descScore) sol = res.solution;
             System.out.printf("  [4] + ILS (%d kicks)  = %,d%n", res.kicks, Math.max(descScore, ilsScore));
+            trace.phase("ils", Math.max(descScore, ilsScore), tDescent);
+            trace.kicks = res.kicks;
+            trace.sweeps = res.sweeps;
+            trace.improvements = res.improvements;
         }
 
         sol.validateOrThrow();
         long score = Scorer.score(in, sol);
         System.out.printf("  >>> score = %,d   (borne sup %,d - %.1f%%)%n", score, ub, 100.0 * score / ub);
+        trace.finalScore = score;
+        trace.write(tracePath);
         writeBack(problem, in, sol);
     }
 
@@ -146,5 +172,71 @@ public class ILSSolver implements Solver {
         if (incremental != fromScorer)
             throw new IllegalStateException("INCOHERENCE apres " + phase +
                     " : carnet=" + incremental + " scorer=" + fromScorer);
+    }
+
+    /**
+     * Trace machine d'une execution : ce que les statistiques de pilotage
+     * consomment pour decider des reglages de la run suivante.
+     */
+    private static final class Trace {
+        private final Instance in;
+        private final long upperBound, budgetS;
+        private final int threads, maxSweeps;
+        private final double descentShare;
+        private final StringBuilder phases = new StringBuilder();
+        boolean degenerate;
+        int kicks, sweeps, improvements;
+        long finalScore;
+
+        Trace(Instance in, long upperBound, long budgetS, int threads,
+              double descentShare, int maxSweeps) {
+            this.in = in;
+            this.upperBound = upperBound;
+            this.budgetS = budgetS;
+            this.threads = threads;
+            this.descentShare = descentShare;
+            this.maxSweeps = maxSweeps;
+        }
+
+        /** Enregistre une phase et rend l'instant courant, a passer a la suivante. */
+        long phase(String name, long score, long sinceNs) {
+            long now = System.nanoTime();
+            if (phases.length() > 0) phases.append(",\n");
+            phases.append(String.format(java.util.Locale.ROOT,
+                    "    {\"nom\": \"%s\", \"score\": %d, \"secondes\": %.3f}",
+                    name, score, (now - sinceNs) / 1e9));
+            return now;
+        }
+
+        void write(String path) {
+            if (path == null) return;
+            String json = String.format(java.util.Locale.ROOT,
+                    "{%n" +
+                    "  \"dimensions\": {\"V\": %d, \"E\": %d, \"R\": %d, \"C\": %d, \"X\": %d},%n" +
+                    "  \"borne_superieure\": %d,%n" +
+                    "  \"degeneree\": %b,%n" +
+                    "  \"parametres\": {\"seconds\": %d, \"threads\": %d, \"descentShare\": %.4f, " +
+                    "\"sweeps\": %d, \"kick\": %d, \"local\": %d, \"temp\": %.4f, \"noise\": %.4f, \"repair\": %d},%n" +
+                    "  \"phases\": [%n%s%n  ],%n" +
+                    "  \"ils\": {\"kicks\": %d, \"sweeps\": %d, \"improvements\": %d},%n" +
+                    "  \"score_final\": %d,%n" +
+                    "  \"part_borne_superieure\": %.4f%n" +
+                    "}%n",
+                    in.V, in.E, in.R, in.C, in.X,
+                    upperBound, degenerate,
+                    budgetS, threads, descentShare, maxSweeps,
+                    ILS.KICK_MAX, ILS.LOCAL, ILS.TEMP, ILS.NOISE, ILS.REPAIR,
+                    phases, kicks, sweeps, improvements,
+                    finalScore, upperBound > 0 ? (double) finalScore / upperBound : 0.0);
+            try {
+                java.nio.file.Path dest = java.nio.file.Paths.get(path);
+                java.nio.file.Path parent = dest.getParent();
+                if (parent != null) java.nio.file.Files.createDirectories(parent);
+                java.nio.file.Files.writeString(dest, json);
+                System.out.println("  trace : " + path);
+            } catch (java.io.IOException e) {
+                System.err.println("  trace non ecrite (" + e.getMessage() + ")");
+            }
+        }
     }
 }
