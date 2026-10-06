@@ -87,17 +87,34 @@ La relaxation lineaire du probleme complet (`tools/stats/lp_bound.py`) tranche.
 Elle impose qu'une requete ne soit servie qu'une fois, donc elle ne surcompte
 pas, et son optimum fractionnaire majore l'optimum entier.
 
-| Instance | borne lache | **borne LP** | score | **part de la borne LP** |
-|---|---|---|---|---|
-| me_at_the_zoo | 561 356 | 524 397 | 516 557 | **98,50 %** |
-| videos_worth_spreading | 817 516 | 620 448 | 613 353 | **98,86 %** |
-| trending_today | 500 000 | — | 500 000 | **optimum prouve** |
+| Instance | borne lache | cache unique | **borne LP** | score | **part de la meilleure borne** |
+|---|---|---|---|---|---|
+| me_at_the_zoo | 561 356 | 561 356 | **524 397** | 516 557 | **98,50 %** |
+| videos_worth_spreading | 817 516 | 791 573 | **620 448** | 613 353 | **98,86 %** |
+| trending_today | 500 000 | 500 000 | — | 500 000 | **optimum prouve** |
+| kittens | 1 492 627 | **1 199 614** | hors de portee | 1 025 324 | **85,47 %** |
 
 Sur `trending_today`, le score egale la borne superieure : comme l'optimum est
 encadre par les deux, il vaut exactement 500 000. L'instance est resolue.
 
 Les ecarts annonces plus haut (31 % et 25 %) etaient donc des artefacts : les
 vrais ecarts valent **1,5 %** et **1,14 %**.
+
+### Le cas de kittens
+
+La relaxation lineaire y est hors de portee : chaque endpoint est relie a
+**352 caches en moyenne sur 500**, soit 74,6 millions de variables. C'est aussi
+ce qui explique son ecart best2-best1 de 1,3 ms — avec autant de caches
+connectes, beaucoup ont des latences presque egales.
+
+On ne dispose donc que de la borne "cache unique", bien plus grossiere. Pour
+calibrer sa qualite : sur `videos_worth_spreading`, elle donne 791 573 la ou la
+LP donne 620 448, soit 28 % au-dessus. Si l'ecart est du meme ordre sur
+`kittens`, le solveur y est en realite bien plus proche que les 85,47 % affiches.
+
+Ce qui est certain : l'optimum de `kittens` est compris entre 1 025 324
+(atteint) et 1 199 614 (borne valide). Le solveur est donc au pire a 14,5 % de
+l'optimum, et probablement bien moins.
 
 ## Conclusion
 
