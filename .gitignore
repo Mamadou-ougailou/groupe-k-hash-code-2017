@@ -39,3 +39,7 @@ __pycache__/
 
 ### Build artefacts locaux ###
 /judge
+
+### Traces d'execution (sauf resultats d'experience conserves) ###
+/traces/*
+!/traces/tuning.json

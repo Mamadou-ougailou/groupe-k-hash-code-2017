@@ -1,0 +1,500 @@
+[
+  {
+    "instance": "kittens.in",
+    "archetype": "plateau_large",
+    "plafond": 1492627,
+    "secondes_par_run": 15,
+    "defaut": 1024970,
+    "conseiller": 1024847,
+    "aleatoire_meilleur": 1024991,
+    "aleatoire_median": 1024974,
+    "aleatoire_pire": 1024576,
+    "config_meilleur_aleatoire": {
+      "ils.descentShare": 0.671,
+      "ils.sweeps": 12,
+      "ils.kick": 7,
+      "ils.local": 2,
+      "ils.temp": 0.0,
+      "ils.noise": 0.496,
+      "ils.repair": 3
+    },
+    "runs": [
+      {
+        "tag": "defaut",
+        "config": {
+          "ils.descentShare": 0.3333,
+          "ils.sweeps": 30,
+          "ils.kick": 3,
+          "ils.local": 3,
+          "ils.temp": 0.0,
+          "ils.noise": 0.2,
+          "ils.repair": 2
+        },
+        "score": 1024970,
+        "part_borne_superieure": 0.6867,
+        "kicks": 2749,
+        "improvements": 50,
+        "degeneree": false,
+        "secondes_reelles": 16.0
+      },
+      {
+        "tag": "conseiller",
+        "config": {
+          "ils.descentShare": 0.25,
+          "ils.sweeps": 30,
+          "ils.kick": 6,
+          "ils.local": 5,
+          "ils.temp": 0.02,
+          "ils.noise": 0.35,
+          "ils.repair": 2
+        },
+        "score": 1024847,
+        "part_borne_superieure": 0.6866,
+        "kicks": 2118,
+        "improvements": 18,
+        "degeneree": false,
+        "secondes_reelles": 16.0
+      },
+      {
+        "tag": "alea0",
+        "config": {
+          "ils.descentShare": 0.181,
+          "ils.sweeps": 18,
+          "ils.kick": 5,
+          "ils.local": 2,
+          "ils.temp": 0.00792,
+          "ils.noise": 0.326,
+          "ils.repair": 2
+        },
+        "score": 1024826,
+        "part_borne_superieure": 0.6866,
+        "kicks": 5018,
+        "improvements": 98,
+        "degeneree": false,
+        "secondes_reelles": 16.0
+      },
+      {
+        "tag": "alea1",
+        "config": {
+          "ils.descentShare": 0.156,
+          "ils.sweeps": 13,
+          "ils.kick": 7,
+          "ils.local": 7,
+          "ils.temp": 0.03422,
+          "ils.noise": 0.348,
+          "ils.repair": 3
+        },
+        "score": 1024576,
+        "part_borne_superieure": 0.6864,
+        "kicks": 1418,
+        "improvements": 31,
+        "degeneree": false,
+        "secondes_reelles": 16.0
+      },
+      {
+        "tag": "alea2",
+        "config": {
+          "ils.descentShare": 0.533,
+          "ils.sweeps": 39,
+          "ils.kick": 10,
+          "ils.local": 2,
+          "ils.temp": 0.00115,
+          "ils.noise": 0.013,
+          "ils.repair": 1
+        },
+        "score": 1024974,
+        "part_borne_superieure": 0.6867,
+        "kicks": 4511,
+        "improvements": 3,
+        "degeneree": false,
+        "secondes_reelles": 16.0
+      },
+      {
+        "tag": "alea3",
+        "config": {
+          "ils.descentShare": 0.663,
+          "ils.sweeps": 58,
+          "ils.kick": 11,
+          "ils.local": 4,
+          "ils.temp": 0.02829,
+          "ils.noise": 0.264,
+          "ils.repair": 4
+        },
+        "score": 1024978,
+        "part_borne_superieure": 0.6867,
+        "kicks": 728,
+        "improvements": 2,
+        "degeneree": false,
+        "secondes_reelles": 16.0
+      },
+      {
+        "tag": "alea4",
+        "config": {
+          "ils.descentShare": 0.664,
+          "ils.sweeps": 80,
+          "ils.kick": 4,
+          "ils.local": 6,
+          "ils.temp": 0.0,
+          "ils.noise": 0.109,
+          "ils.repair": 4
+        },
+        "score": 1024975,
+        "part_borne_superieure": 0.6867,
+        "kicks": 594,
+        "improvements": 4,
+        "degeneree": false,
+        "secondes_reelles": 16.0
+      },
+      {
+        "tag": "alea5",
+        "config": {
+          "ils.descentShare": 0.671,
+          "ils.sweeps": 12,
+          "ils.kick": 7,
+          "ils.local": 2,
+          "ils.temp": 0.0,
+          "ils.noise": 0.496,
+          "ils.repair": 3
+        },
+        "score": 1024991,
+        "part_borne_superieure": 0.6867,
+        "kicks": 1396,
+        "improvements": 10,
+        "degeneree": false,
+        "secondes_reelles": 16.0
+      }
+    ]
+  },
+  {
+    "instance": "videos_worth_spreading.in",
+    "archetype": "rigide_fragmentee",
+    "plafond": 817516,
+    "secondes_par_run": 15,
+    "defaut": 613353,
+    "conseiller": 612745,
+    "aleatoire_meilleur": 613307,
+    "aleatoire_median": 612857,
+    "aleatoire_pire": 612098,
+    "config_meilleur_aleatoire": {
+      "ils.descentShare": 0.671,
+      "ils.sweeps": 12,
+      "ils.kick": 7,
+      "ils.local": 2,
+      "ils.temp": 0.0,
+      "ils.noise": 0.496,
+      "ils.repair": 3
+    },
+    "runs": [
+      {
+        "tag": "defaut",
+        "config": {
+          "ils.descentShare": 0.3333,
+          "ils.sweeps": 30,
+          "ils.kick": 3,
+          "ils.local": 3,
+          "ils.temp": 0.0,
+          "ils.noise": 0.2,
+          "ils.repair": 2
+        },
+        "score": 613353,
+        "part_borne_superieure": 0.7503,
+        "kicks": 33753,
+        "improvements": 541,
+        "degeneree": false,
+        "secondes_reelles": 15.9
+      },
+      {
+        "tag": "conseiller",
+        "config": {
+          "ils.descentShare": 0.5,
+          "ils.sweeps": 30,
+          "ils.kick": 2,
+          "ils.local": 3,
+          "ils.temp": 0.0,
+          "ils.noise": 0.15,
+          "ils.repair": 2
+        },
+        "score": 612745,
+        "part_borne_superieure": 0.7495,
+        "kicks": 33903,
+        "improvements": 473,
+        "degeneree": false,
+        "secondes_reelles": 16.2
+      },
+      {
+        "tag": "alea0",
+        "config": {
+          "ils.descentShare": 0.181,
+          "ils.sweeps": 18,
+          "ils.kick": 5,
+          "ils.local": 2,
+          "ils.temp": 0.00792,
+          "ils.noise": 0.326,
+          "ils.repair": 2
+        },
+        "score": 612781,
+        "part_borne_superieure": 0.7496,
+        "kicks": 114514,
+        "improvements": 626,
+        "degeneree": false,
+        "secondes_reelles": 15.2
+      },
+      {
+        "tag": "alea1",
+        "config": {
+          "ils.descentShare": 0.156,
+          "ils.sweeps": 13,
+          "ils.kick": 7,
+          "ils.local": 7,
+          "ils.temp": 0.03422,
+          "ils.noise": 0.348,
+          "ils.repair": 3
+        },
+        "score": 612098,
+        "part_borne_superieure": 0.7487,
+        "kicks": 27401,
+        "improvements": 199,
+        "degeneree": false,
+        "secondes_reelles": 15.2
+      },
+      {
+        "tag": "alea2",
+        "config": {
+          "ils.descentShare": 0.533,
+          "ils.sweeps": 39,
+          "ils.kick": 10,
+          "ils.local": 2,
+          "ils.temp": 0.00115,
+          "ils.noise": 0.013,
+          "ils.repair": 1
+        },
+        "score": 612934,
+        "part_borne_superieure": 0.7498,
+        "kicks": 145566,
+        "improvements": 618,
+        "degeneree": false,
+        "secondes_reelles": 15.2
+      },
+      {
+        "tag": "alea3",
+        "config": {
+          "ils.descentShare": 0.663,
+          "ils.sweeps": 58,
+          "ils.kick": 11,
+          "ils.local": 4,
+          "ils.temp": 0.02829,
+          "ils.noise": 0.264,
+          "ils.repair": 4
+        },
+        "score": 612645,
+        "part_borne_superieure": 0.7494,
+        "kicks": 35448,
+        "improvements": 388,
+        "degeneree": false,
+        "secondes_reelles": 15.2
+      },
+      {
+        "tag": "alea4",
+        "config": {
+          "ils.descentShare": 0.664,
+          "ils.sweeps": 80,
+          "ils.kick": 4,
+          "ils.local": 6,
+          "ils.temp": 0.0,
+          "ils.noise": 0.109,
+          "ils.repair": 4
+        },
+        "score": 613122,
+        "part_borne_superieure": 0.75,
+        "kicks": 12302,
+        "improvements": 462,
+        "degeneree": false,
+        "secondes_reelles": 15.5
+      },
+      {
+        "tag": "alea5",
+        "config": {
+          "ils.descentShare": 0.671,
+          "ils.sweeps": 12,
+          "ils.kick": 7,
+          "ils.local": 2,
+          "ils.temp": 0.0,
+          "ils.noise": 0.496,
+          "ils.repair": 3
+        },
+        "score": 613307,
+        "part_borne_superieure": 0.7502,
+        "kicks": 41358,
+        "improvements": 697,
+        "degeneree": false,
+        "secondes_reelles": 15.8
+      }
+    ]
+  },
+  {
+    "instance": "trending_today.in",
+    "archetype": "degeneree",
+    "plafond": 500000,
+    "secondes_par_run": 15,
+    "defaut": 500000,
+    "conseiller": 500000,
+    "aleatoire_meilleur": 500000,
+    "aleatoire_median": 500000,
+    "aleatoire_pire": 500000,
+    "config_meilleur_aleatoire": {
+      "ils.descentShare": 0.181,
+      "ils.sweeps": 18,
+      "ils.kick": 5,
+      "ils.local": 2,
+      "ils.temp": 0.00792,
+      "ils.noise": 0.326,
+      "ils.repair": 2
+    },
+    "runs": [
+      {
+        "tag": "defaut",
+        "config": {
+          "ils.descentShare": 0.3333,
+          "ils.sweeps": 30,
+          "ils.kick": 3,
+          "ils.local": 3,
+          "ils.temp": 0.0,
+          "ils.noise": 0.2,
+          "ils.repair": 2
+        },
+        "score": 500000,
+        "part_borne_superieure": 1.0,
+        "kicks": 0,
+        "improvements": 0,
+        "degeneree": true,
+        "secondes_reelles": 0.7
+      },
+      {
+        "tag": "conseiller",
+        "config": {
+          "ils.descentShare": 0.3333,
+          "ils.sweeps": 30,
+          "ils.kick": 3,
+          "ils.local": 3,
+          "ils.temp": 0.0,
+          "ils.noise": 0.2,
+          "ils.repair": 2
+        },
+        "score": 500000,
+        "part_borne_superieure": 1.0,
+        "kicks": 0,
+        "improvements": 0,
+        "degeneree": true,
+        "secondes_reelles": 0.6
+      },
+      {
+        "tag": "alea0",
+        "config": {
+          "ils.descentShare": 0.181,
+          "ils.sweeps": 18,
+          "ils.kick": 5,
+          "ils.local": 2,
+          "ils.temp": 0.00792,
+          "ils.noise": 0.326,
+          "ils.repair": 2
+        },
+        "score": 500000,
+        "part_borne_superieure": 1.0,
+        "kicks": 0,
+        "improvements": 0,
+        "degeneree": true,
+        "secondes_reelles": 0.6
+      },
+      {
+        "tag": "alea1",
+        "config": {
+          "ils.descentShare": 0.156,
+          "ils.sweeps": 13,
+          "ils.kick": 7,
+          "ils.local": 7,
+          "ils.temp": 0.03422,
+          "ils.noise": 0.348,
+          "ils.repair": 3
+        },
+        "score": 500000,
+        "part_borne_superieure": 1.0,
+        "kicks": 0,
+        "improvements": 0,
+        "degeneree": true,
+        "secondes_reelles": 0.7
+      },
+      {
+        "tag": "alea2",
+        "config": {
+          "ils.descentShare": 0.533,
+          "ils.sweeps": 39,
+          "ils.kick": 10,
+          "ils.local": 2,
+          "ils.temp": 0.00115,
+          "ils.noise": 0.013,
+          "ils.repair": 1
+        },
+        "score": 500000,
+        "part_borne_superieure": 1.0,
+        "kicks": 0,
+        "improvements": 0,
+        "degeneree": true,
+        "secondes_reelles": 0.6
+      },
+      {
+        "tag": "alea3",
+        "config": {
+          "ils.descentShare": 0.663,
+          "ils.sweeps": 58,
+          "ils.kick": 11,
+          "ils.local": 4,
+          "ils.temp": 0.02829,
+          "ils.noise": 0.264,
+          "ils.repair": 4
+        },
+        "score": 500000,
+        "part_borne_superieure": 1.0,
+        "kicks": 0,
+        "improvements": 0,
+        "degeneree": true,
+        "secondes_reelles": 0.6
+      },
+      {
+        "tag": "alea4",
+        "config": {
+          "ils.descentShare": 0.664,
+          "ils.sweeps": 80,
+          "ils.kick": 4,
+          "ils.local": 6,
+          "ils.temp": 0.0,
+          "ils.noise": 0.109,
+          "ils.repair": 4
+        },
+        "score": 500000,
+        "part_borne_superieure": 1.0,
+        "kicks": 0,
+        "improvements": 0,
+        "degeneree": true,
+        "secondes_reelles": 0.6
+      },
+      {
+        "tag": "alea5",
+        "config": {
+          "ils.descentShare": 0.671,
+          "ils.sweeps": 12,
+          "ils.kick": 7,
+          "ils.local": 2,
+          "ils.temp": 0.0,
+          "ils.noise": 0.496,
+          "ils.repair": 3
+        },
+        "score": 500000,
+        "part_borne_superieure": 1.0,
+        "kicks": 0,
+        "improvements": 0,
+        "degeneree": true,
+        "secondes_reelles": 0.6
+      }
+    ]
+  }
+]
