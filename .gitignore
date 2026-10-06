@@ -32,3 +32,10 @@ bin/
 .DS_Store
 ### IntelliJ module file ###
 *.iml
+
+### Python ###
+__pycache__/
+*.pyc
+
+### Build artefacts locaux ###
+/judge
