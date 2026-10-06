@@ -1,0 +1,163 @@
+:root {
+  --bg: #f6f7f9;
+  --surface: #ffffff;
+  --border: #d8dce3;
+  --text: #1b1f27;
+  --muted: #5d6572;
+  --accent: #2f6fdb;
+  --accent-text: #ffffff;
+  --ok-solid: #15803d;
+  --bad: #c0392b;
+  --code-bg: #eef1f5;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #14171c;
+    --surface: #1c2027;
+    --border: #2e343d;
+    --text: #e7eaef;
+    --muted: #9aa3b2;
+    --accent: #5b9bff;
+    --accent-text: #0d1016;
+    --ok-solid: #4ade80;
+    --bad: #f87171;
+    --code-bg: #232831;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 0 16px 64px;
+  background: var(--bg);
+  color: var(--text);
+  font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+header {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 32px 0 16px;
+}
+
+header h1 { margin: 0; font-size: 26px; letter-spacing: -0.01em; }
+header p { margin: 4px 0 0; color: var(--muted); }
+
+.tabs {
+  max-width: 980px;
+  margin: 0 auto 20px;
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid var(--border);
+}
+
+.tab {
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 10px 16px;
+  font: inherit;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.tab.active { color: var(--text); border-bottom-color: var(--accent); }
+
+main { max-width: 980px; margin: 0 auto; }
+
+.panel { display: none; }
+.panel.active { display: block; }
+
+fieldset {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin: 0 0 16px;
+  padding: 16px 18px 18px;
+}
+
+legend { padding: 0 6px; font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 12px;
+}
+
+label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: var(--muted); }
+
+input, select {
+  font: inherit;
+  padding: 7px 9px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: var(--bg);
+  color: var(--text);
+  width: 100%;
+}
+
+input:focus, select:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+
+label.hidden { display: none; }
+
+.hint { margin: 12px 0 0; font-size: 13px; color: var(--muted); }
+
+.actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin: 16px 0; }
+
+button[type="submit"], #refresh-btn, #val-btn, .dl {
+  background: var(--accent);
+  color: var(--accent-text);
+  border: none;
+  border-radius: 7px;
+  padding: 9px 18px;
+  font: inherit;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+button:disabled { opacity: 0.55; cursor: progress; }
+
+.status { color: var(--muted); font-size: 14px; }
+.status.err { color: var(--bad); }
+.status.ok { color: var(--ok-solid); }
+
+.result {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px 18px;
+}
+
+.result.hidden, .hidden { display: none; }
+
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin: 12px 0 0; }
+
+.stat { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; }
+.stat .k { font-size: 12px; color: var(--muted); }
+.stat .v { font-size: 18px; font-variant-numeric: tabular-nums; margin-top: 2px; }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.card h3 { margin: 0 0 4px; font-size: 16px; }
+.card .meta { color: var(--muted); font-size: 13px; }
+
+.dl { text-decoration: none; display: inline-block; }
+
+code, pre { background: var(--code-bg); border-radius: 5px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; }
+code { padding: 1px 5px; }
+
+ul.errors { margin: 10px 0 0; padding-left: 20px; color: var(--bad); font-size: 14px; }
+ul.errors li { margin-bottom: 3px; }

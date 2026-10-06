@@ -1,0 +1,3 @@
+data/instances/*.in
+data/instances/*.json
+__pycache__/

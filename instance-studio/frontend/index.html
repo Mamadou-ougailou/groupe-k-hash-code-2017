@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Instance Studio</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<header>
+  <h1>Instance Studio</h1>
+  <p>Générateur d'instances — Hash Code 2017, « Streaming videos »</p>
+</header>
+
+<nav class="tabs">
+  <button class="tab active" data-tab="generate">Générer</button>
+  <button class="tab" data-tab="library">Instances</button>
+  <button class="tab" data-tab="validate">Valider</button>
+</nav>
+
+<main>
+
+<section id="generate" class="panel active">
+  <form id="gen-form" novalidate>
+
+    <fieldset>
+      <legend>Dimensions</legend>
+      <div class="grid">
+        <label>Nom <input name="name" type="text" maxlength="40" placeholder="ma-instance"></label>
+        <label>Graine <input name="seed" type="number" value="42" min="0" max="2147483647"></label>
+        <label>V — vidéos <input name="V" type="number" value="5000" min="1" max="10000"></label>
+        <label>E — endpoints <input name="E" type="number" value="200" min="1" max="1000"></label>
+        <label>C — caches <input name="C" type="number" value="50" min="1" max="1000"></label>
+        <label>X — capacité (Mo) <input name="X" type="number" value="10000" min="1" max="500000"></label>
+        <label>R — lignes de requêtes <input name="R" type="number" value="50000" min="1" max="1000000"></label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Tailles des vidéos</legend>
+      <div class="grid">
+        <label>Distribution
+          <select name="size_dist">
+            <option value="uniform">uniforme</option>
+            <option value="lognormal">log-normale</option>
+            <option value="bimodal">bimodale</option>
+          </select>
+        </label>
+        <label data-when="size_dist=uniform,bimodal">Taille min <input name="size_min" type="number" value="1" min="1" max="1000"></label>
+        <label data-when="size_dist=uniform,bimodal">Taille max <input name="size_max" type="number" value="300" min="1" max="1000"></label>
+        <label data-when="size_dist=lognormal">mu <input name="size_log_mu" type="number" step="0.1" value="4.0" min="0" max="8"></label>
+        <label data-when="size_dist=lognormal">sigma <input name="size_log_sigma" type="number" step="0.01" value="0.8" min="0.01" max="3"></label>
+        <label data-when="size_dist=bimodal">Part de petites <input name="size_small_frac" type="number" step="0.05" value="0.8" min="0" max="1"></label>
+        <label data-when="size_dist=bimodal">Grande min <input name="size_large_min" type="number" value="400" min="1" max="1000"></label>
+        <label data-when="size_dist=bimodal">Grande max <input name="size_large_max" type="number" value="1000" min="1" max="1000"></label>
+      </div>
+      <p class="hint">Un coefficient de variation proche de 0 rend l'exposant sur la taille sans effet dans un glouton par ratio.</p>
+    </fieldset>
+
+    <fieldset>
+      <legend>Topologie</legend>
+      <div class="grid">
+        <label>Placement
+          <select name="topology">
+            <option value="clustered">géographique (caches voisins)</option>
+            <option value="random">aléatoire uniforme</option>
+          </select>
+        </label>
+        <label data-when="topology=clustered">Bruit de position <input name="topo_jitter" type="number" step="0.01" value="0.02" min="0" max="0.5"></label>
+        <label>Degré des endpoints
+          <select name="degree_dist">
+            <option value="uniform">uniforme</option>
+            <option value="constant">constant</option>
+            <option value="poisson">Poisson</option>
+          </select>
+        </label>
+        <label data-when="degree_dist=constant">Degré <input name="degree" type="number" value="4" min="0" max="1000"></label>
+        <label data-when="degree_dist=uniform">Degré min <input name="degree_min" type="number" value="2" min="0" max="1000"></label>
+        <label data-when="degree_dist=uniform">Degré max <input name="degree_max" type="number" value="8" min="0" max="1000"></label>
+        <label data-when="degree_dist=poisson">Lambda <input name="degree_lambda" type="number" step="0.5" value="4" min="0" max="1000"></label>
+      </div>
+      <p class="hint">Le mode géographique place endpoints et caches sur un anneau : les caches proches se partagent des endpoints, ce qui crée du recouvrement réaliste.</p>
+    </fieldset>
+
+    <fieldset>
+      <legend>Latences</legend>
+      <div class="grid">
+        <label>Datacenter min <input name="dc_min" type="number" value="200" min="2" max="4000"></label>
+        <label>Datacenter max <input name="dc_max" type="number" value="2000" min="2" max="4000"></label>
+        <label>Étalement <input name="latency_spread" type="number" step="0.05" value="0.6" min="0" max="1"></label>
+        <label>Bruit <input name="latency_noise" type="number" step="0.01" value="0.05" min="0" max="1"></label>
+      </div>
+      <p class="hint">Étalement à 0 : tous les caches d'un endpoint ont la même latence, donc retirer une vidéo ne coûte rien et le local search se retrouve sur un plateau. À 1 : les écarts sont maximaux et la solution est rigide.</p>
+    </fieldset>
+
+    <fieldset>
+      <legend>Requêtes</legend>
+      <div class="grid">
+        <label>Popularité des vidéos
+          <select name="popularity">
+            <option value="zipf">Zipf</option>
+            <option value="uniform">uniforme</option>
+          </select>
+        </label>
+        <label data-when="popularity=zipf">Exposant Zipf <input name="zipf_alpha" type="number" step="0.1" value="0.8" min="0" max="3"></label>
+        <label>Demande par endpoint
+          <select name="demand">
+            <option value="uniform">uniforme</option>
+            <option value="zipf">Zipf</option>
+          </select>
+        </label>
+        <label data-when="demand=zipf">Exposant demande <input name="demand_alpha" type="number" step="0.1" value="0.5" min="0" max="3"></label>
+        <label>Corrélation taille / popularité
+          <select name="size_popularity">
+            <option value="none">aucune</option>
+            <option value="positive">positive</option>
+            <option value="negative">négative</option>
+          </select>
+        </label>
+        <label>Compte min <input name="count_min" type="number" value="1" min="1" max="10000"></label>
+        <label>Compte max <input name="count_max" type="number" value="2000" min="1" max="10000"></label>
+        <label>Taux de duplication <input name="duplicate_rate" type="number" step="0.05" value="0.2" min="0" max="0.95"></label>
+      </div>
+      <p class="hint">Le taux de duplication contrôle la part de lignes qui répètent un couple (vidéo, endpoint) déjà présent — le motif qui fait tomber les parseurs qui écrasent au lieu d'accumuler.</p>
+    </fieldset>
+
+    <div class="actions">
+      <button type="submit" id="gen-btn">Générer</button>
+      <span id="gen-status" class="status"></span>
+    </div>
+  </form>
+
+  <div id="gen-result" class="result hidden"></div>
+</section>
+
+<section id="library" class="panel">
+  <div class="actions">
+    <button id="refresh-btn" type="button">Rafraîchir</button>
+    <span id="lib-status" class="status"></span>
+  </div>
+  <div id="lib-list"></div>
+</section>
+
+<section id="validate" class="panel">
+  <p>Envoie un fichier <code>.in</code> : le serveur vérifie le format et toutes les bornes de l'énoncé.</p>
+  <div class="actions">
+    <input type="file" id="val-file" accept=".in,.txt,text/plain">
+    <button id="val-btn" type="button">Valider</button>
+    <span id="val-status" class="status"></span>
+  </div>
+  <div id="val-result" class="result hidden"></div>
+</section>
+
+</main>
+
+<script src="/app.js"></script>
+</body>
+</html>
