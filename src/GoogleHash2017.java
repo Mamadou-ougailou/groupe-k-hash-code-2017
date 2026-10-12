@@ -1,5 +1,4 @@
 
-
 import model.Problem;
 import io.Parser;
 import solver.Solver;
@@ -11,22 +10,11 @@ public class GoogleHash2017 {
 
         if (args.length < 1) {
             System.err.println("Please provide the path to the input file as an argument.");
-            // Example for development:
-            // args = new String[]{"instances/me_at_the_zoo.in"};
             return;
         }
 
         String inputFilePath = args[0];
-        String outputFilePath;
-        if (args.length >= 2) {
-            outputFilePath = args[1];
-        } else {
-            java.io.File inputFile = new java.io.File(inputFilePath);
-            String name = inputFile.getName();
-            int dotIdx = name.lastIndexOf('.');
-            String baseName = (dotIdx > 0) ? name.substring(0, dotIdx) : name;
-            outputFilePath = "output/" + baseName + ".out";
-        }
+        String outputFilePath = OutputWriter.getOutputFilePath(args, inputFilePath);
 
         // 1. Parse Input
         Parser parser = new Parser();
@@ -42,14 +30,6 @@ public class GoogleHash2017 {
         System.out.println("Running ILSSolver...");
         solver.solve(problem);
 
-
-        // 4. Output results to file
-        OutputWriter writer = new OutputWriter();
-        try {
-            writer.writeToFile(problem, outputFilePath);
-            System.out.println("Saved solution to: " + outputFilePath);
-        } catch (java.io.IOException e) {
-            System.err.println("Failed to write output file: " + e.getMessage());
-        }
+        OutputWriter.extracteIntoFile(problem, outputFilePath);
     }
 }
