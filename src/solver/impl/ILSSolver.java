@@ -49,8 +49,8 @@ public class ILSSolver implements Solver {
     @Override
     public void solve(Problem problem) {
         Instance in = new Instance(toTokens(problem));
-        System.out.printf("ILS : budget = %d s, threads = %d%n", budgetS, threads);
-        System.out.print("  "); in.printSummary();
+//        System.out.printf("ILS : budget = %d s, threads = %d%n", budgetS, threads);
+//        System.out.print("  "); in.printSummary();
         long ub = Scorer.upperBound(in);
 
         Solution sol;
@@ -64,7 +64,7 @@ public class ILSSolver implements Solver {
             sol.validateOrThrow();
             long greedy = Scorer.score(in, sol);
             check(book.score(), greedy, "glouton");
-            System.out.printf("  [1] glouton           = %,d%n", greedy);
+//            System.out.printf("  [1] glouton           = %,d%n", greedy);
 
             BlockKnapsack bk = new BlockKnapsack(in, sol, book);
             long desc = ILS.descend(in, sol, book, bk, new Random(1),
@@ -74,7 +74,7 @@ public class ILSSolver implements Solver {
             check(desc, descScore, "descente");
             if (descScore < greedy)
                 throw new IllegalStateException("MONOTONIE VIOLEE : " + greedy + " -> " + descScore);
-            System.out.printf("  [3] + sac a dos exact = %,d%n", descScore);
+//            System.out.printf("  [3] + sac a dos exact = %,d%n", descScore);
 
             ILS.Result res;
             try {
@@ -88,12 +88,12 @@ public class ILSSolver implements Solver {
             long ilsScore = Scorer.score(in, res.solution);
             check(res.score, ilsScore, "ILS");
             if (ilsScore >= descScore) sol = res.solution;
-            System.out.printf("  [4] + ILS (%d kicks)  = %,d%n", res.kicks, Math.max(descScore, ilsScore));
+//            System.out.printf("  [4] + ILS (%d kicks)  = %,d%n", res.kicks, Math.max(descScore, ilsScore));
         }
 
         sol.validateOrThrow();
         long score = Scorer.score(in, sol);
-        System.out.printf("  >>> score = %,d   (borne sup %,d - %.1f%%)%n", score, ub, 100.0 * score / ub);
+//        System.out.printf("  >>> score = %,d   (borne sup %,d - %.1f%%)%n", score, ub, 100.0 * score / ub);
         writeBack(problem, in, sol);
     }
 

@@ -23,6 +23,7 @@ CXXFLAGS    = -O3
 OUT_DIR      = out
 OUTPUT_DIR   = output
 TARGET_JUDGE = judge$(EXE)
+INSTANCES := $(wildcard instances/*.in)
 
 .PHONY: all compile judge generate dashboard pipeline run clean FORCE
 
@@ -45,9 +46,11 @@ instances/%.in: FORCE compile judge
 	@$(call MKDIR,$(OUTPUT_DIR))
 	$(JAVA) -cp $(OUT_DIR) GoogleHash2017 $@ $(OUTPUT_DIR)/$*.out
 	@echo ----------------------------------------
-	@echo Running Official Judge:
+	@echo Running Official Judge for $*
 	@$(TARGET_JUDGE) $@ $(OUTPUT_DIR)/$*.out
 	@echo ----------------------------------------
+
+all-instances: $(INSTANCES)
 
 # ── Python tooling ─────────────────────────────────────────────────────────────
 
@@ -63,18 +66,6 @@ generate:
 # Must be run from the project root so that `python -m tools.dashboard.dashboard` resolves correctly.
 dashboard:
 	python -m tools.dashboard.dashboard
-
-# Full pipeline: generate → validate → compile → solve → judge [→ dashboard]
-# Override: make pipeline GENERATOR=universalLambda SEED=7 DASHBOARD=--dashboard
-DASHBOARD ?=
-pipeline:
-	python tools/pipeline.py --generator $(GENERATOR) --seed $(SEED) $(DASHBOARD)
-
-# Pipeline on an existing instance (no generation step)
-# Usage: make run INSTANCE=instances/me_at_the_zoo.in
-# Add DASHBOARD=--dashboard to also open the dashboard.
-run:
-	python tools/pipeline.py --instance $(INSTANCE) $(DASHBOARD)
 
 # ── Maintenance ────────────────────────────────────────────────────────────────
 clean:
