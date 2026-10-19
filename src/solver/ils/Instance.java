@@ -45,12 +45,30 @@ public final class Instance {
         this(new Tok(tokens));
     }
 
+    private static int gcd(int a, int b) {
+        while (b != 0) {
+            int t = b;
+            b = a % b;
+            a = t;
+        }
+        return Math.abs(a);
+    }
+
     private Instance(Tok t) {
 
-        V = t.next();  E = t.next();  R = t.next();  C = t.next();  X = t.next();
+        V = t.next();  E = t.next();  R = t.next();  C = t.next();  int rawX = t.next();
 
         videoSize = new int[V];
-        for (int i = 0; i < V; i++) videoSize[i] = t.next();
+        int g = rawX;
+        for (int i = 0; i < V; i++) {
+            videoSize[i] = t.next();
+            if (g > 1) g = gcd(g, videoSize[i]);
+        }
+        if (g > 1) {
+            for (int i = 0; i < V; i++) videoSize[i] /= g;
+            rawX /= g;
+        }
+        X = rawX;
 
         dcLatency = new int[E];
         int[] k = new int[E];

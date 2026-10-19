@@ -12,13 +12,15 @@ public final class BlockKnapsack {
     private final long[] sortKey;
     private final int[]  ord;
     private final int[]  core;
+    public static final int MAX_DP_CAP = 2_000_000;
+
     private final int[]  chosen;
     private final int[]  gsel;
     private final int[]  prev;
-    private final long[] dp;
-    private long[] take;
-    private final int vBits;
-    private final long vMask;
+    private long[]       dp;
+    private long[]       take;
+    private final int    vBits;
+    private final long   vMask;
 
     public long fallbacks;
 
@@ -31,7 +33,7 @@ public final class BlockKnapsack {
         chosen  = new int[in.V];
         gsel    = new int[in.V];
         prev    = new int[in.V];
-        dp      = new long[in.X + 1];
+        dp      = new long[Math.min(in.X + 1, 1024)];
         take    = new long[1024];
         vBits   = 32 - Integer.numberOfLeadingZeros(Math.max(1, in.V - 1));
         vMask   = (1L << vBits) - 1;
@@ -158,11 +160,14 @@ public final class BlockKnapsack {
             if (coreW <= cap) {
                 for (int i = 0; i < nCore; i++) chosen[nCh++] = core[i];
                 ok = fixP + sumGain(core, nCore) >= lb;
+            } else if (cap > MAX_DP_CAP) {
+                ok = false;
             } else {
 
                 final int words = (cap + 64) >>> 6;
                 final int need = nCore * words;
                 if (take.length < need) take = new long[need];
+                if (dp.length < cap + 1) dp = new long[cap + 1];
                 Arrays.fill(take, 0, need, 0L);
                 Arrays.fill(dp, 0, cap + 1, 0L);
                 for (int i = 0; i < nCore; i++) {
