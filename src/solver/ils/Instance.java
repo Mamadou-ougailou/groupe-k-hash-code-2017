@@ -4,82 +4,75 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-/**
- * Instance du probleme "Streaming videos" (Hash Code 2017).
- *
- * Regle de conception : AUCUN objet dans les structures de donnees.
- * Tout est en tableaux primitifs, au format CSR (Compressed Sparse Row)
- * pour les relations creuses endpoint -> caches.
- *
- * Point cle sur la connectivite : un endpoint n'est PAS connecte a tous les
- * caches. Certains n'en ont qu'un, d'autres aucun (ils ne peuvent etre servis
- * que par le data center). On ne stocke donc que les connexions existantes.
- */
 public final class Instance {
 
-    public final int V;   // nombre de videos
-    public final int E;   // nombre d'endpoints
-    public final int R;   // nombre de descriptions de requetes
-    public final int C;   // nombre de caches
-    public final int X;   // capacite d'un cache en Mo
+    public final int V;
+    public final int E;
+    public final int R;
+    public final int C;
+    public final int X;
 
-    public final int[] videoSize;   // [V]  taille de chaque video
-    public final int[] dcLatency;   // [E]  L_D : latence vers le data center
+    public final int[] videoSize;
+    public final int[] dcLatency;
 
-    /* --- CSR : endpoint -> caches auxquels il est connecte --------------- */
-    public final int[] epStart;     // [E+1] bornes dans epCache / epLat
-    public final int[] epCache;     // [nbConnexions] id du cache
-    public final int[] epLat;       // [nbConnexions] latence vers ce cache
+    public final int[] epStart;
+    public final int[] epCache;
+    public final int[] epLat;
 
-    /**
-     * Matrice dense de latence : lat[e * C + c], ou -1 si e n'est PAS
-     * connecte a c. Taille max E*C = 1000*1000 = 4 Mo : negligeable, et
-     * donne un acces O(1) indispensable dans les boucles chaudes.
-     */
     public final int[] lat;
 
-    /* --- requetes -------------------------------------------------------- */
-    public final int[] reqVideo;     // [R]
-    public final int[] reqEndpoint;  // [R]
-    public final int[] reqCount;     // [R]
-    public final long totalRequests; // somme des reqCount (denominateur du score)
+    public final int[] reqVideo;
+    public final int[] reqEndpoint;
+    public final int[] reqCount;
+    public final long totalRequests;
 
-    /* --- requetes triees par endpoint : ses requetes = [epReqStart[e], epReqStart[e+1]) */
-    public final int[] epReqStart;   // [E+1]
+    public final int[] epReqStart;
 
-    /* --- CSR : cache -> endpoints qui lui sont connectes ------------------ */
-    public final int[] cEpStart;     // [C+1]
-    public final int[] cEp;          // [nbConnexions] id de l'endpoint
-    public final int[] cEpLat;       // [nbConnexions] latence endpoint -> ce cache
+    public final int[] cEpStart;
+    public final int[] cEp;
+    public final int[] cEpLat;
 
-    /* --- CSR : video -> indices des requetes la concernant ---------------- */
-    public final int[] vidStart;     // [V+1]
-    public final int[] vidReq;       // [R]
+    public final int[] vidStart;
+    public final int[] vidReq;
 
-    /** Nombre d'endpoints sans aucun cache (servis uniquement par le DC). */
     public final int orphanEndpoints;
 
     public Instance(Path file) throws IOException {
         this(new Tok(Files.readAllBytes(file)));
     }
 
-    /** Meme format que le fichier .in, mais deja decoupe en entiers (cf. ILSSolver). */
     public Instance(int[] tokens) {
         this(new Tok(tokens));
     }
 
+    private static int gcd(int a, int b) {
+        while (b != 0) {
+            int t = b;
+            b = a % b;
+            a = t;
+        }
+        return Math.abs(a);
+    }
+
     private Instance(Tok t) {
 
-        V = t.next();  E = t.next();  R = t.next();  C = t.next();  X = t.next();
+        V = t.next();  E = t.next();  R = t.next();  C = t.next();  int rawX = t.next();
 
         videoSize = new int[V];
-        for (int i = 0; i < V; i++) videoSize[i] = t.next();
+        int g = rawX;
+        for (int i = 0; i < V; i++) {
+            videoSize[i] = t.next();
+            if (g > 1) g = gcd(g, videoSize[i]);
+        }
+        if (g > 1) {
+            for (int i = 0; i < V; i++) videoSize[i] /= g;
+            rawX /= g;
+        }
+        X = rawX;
 
         dcLatency = new int[E];
         int[] k = new int[E];
 
-        // Premiere passe impossible (flux sequentiel) : on bufferise les
-        // connexions dans des tableaux temporaires dimensionnes au pire cas.
         int[] tmpCache = new int[E * 4];
         int[] tmpLat   = new int[E * 4];
         int nConn = 0;
@@ -110,7 +103,6 @@ public final class Instance {
         System.arraycopy(tmpCache, 0, epCache, 0, nConn);
         System.arraycopy(tmpLat,   0, epLat,   0, nConn);
 
-        // Matrice dense : -1 = pas de connexion.
         lat = new int[E * C];
         java.util.Arrays.fill(lat, -1);
         for (int e = 0; e < E; e++) {
@@ -147,8 +139,7 @@ public final class Instance {
             epReqStart[te[r] + 1]++;
         }
         for (int e = 0; e < E; e++) epReqStart[e + 1] += epReqStart[e];
-        // Tri par endpoint (comptage) : les requetes d'un endpoint deviennent contigues,
-        // ce qui permet de ne parcourir que celles qui touchent un cache donne.
+
         int[] cnt = new int[V + 1];
         int[] curE = new int[E];
         for (int r = 0; r < R; r++) {
@@ -160,7 +151,6 @@ public final class Instance {
         }
         totalRequests = tot;
 
-        // CSR video -> requetes
         vidStart = new int[V + 1];
         for (int v = 0; v < V; v++) vidStart[v + 1] = vidStart[v] + cnt[v];
         int[] cursor = new int[V];
@@ -171,7 +161,6 @@ public final class Instance {
         }
     }
 
-    /** Latence de l'endpoint e vers le cache c, ou -1 s'ils ne sont pas relies. */
     public int latency(int e, int c) { return lat[e * C + c]; }
 
     public void printSummary() {
@@ -186,7 +175,6 @@ public final class Instance {
             V, E, R, C, X, totalRequests, orphanEndpoints, mono, multi);
     }
 
-    /** Tokenizer sur byte[] (ou int[] deja decoupe) : les entiers de l'enonce sont tous naturels. */
     private static final class Tok {
         private final byte[] b;
         private final int[] ints;
@@ -205,3 +193,4 @@ public final class Instance {
         }
     }
 }
+

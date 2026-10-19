@@ -5,18 +5,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-/**
- * Contenu des caches.
- *
- * Represente par un bitset plat (long[]) indexe par c * V + v : acces O(1),
- * memoire 8x plus compacte qu'un boolean[] (kittens : 625 Ko au lieu de 5 Mo),
- * ce qui le garde en cache CPU.
- */
 public final class Solution {
 
     public final Instance in;
-    private final long[] bits;   // bitset de taille C*V
-    public final int[] used;     // [C] capacite consommee par cache
+    private final long[] bits;
+    public final int[] used;
 
     public Solution(Instance in) {
         this.in = in;
@@ -29,7 +22,6 @@ public final class Solution {
         return (bits[i >>> 6] & (1L << i)) != 0;
     }
 
-    /** Ajoute v dans c. Retourne false si deja present ou si la capacite est depassee. */
     public boolean add(int c, int v) {
         if (has(c, v)) return false;
         int s = in.videoSize[v];
@@ -40,7 +32,6 @@ public final class Solution {
         return true;
     }
 
-    /** Retire v de c. Retourne false si la video n'y etait pas. */
     public boolean remove(int c, int v) {
         if (!has(c, v)) return false;
         int i = c * in.V + v;
@@ -65,16 +56,11 @@ public final class Solution {
         return s;
     }
 
-    /** Recopie en place : evite de reallouer (et de casser les references des optimiseurs). */
     public void copyFrom(Solution other) {
         System.arraycopy(other.bits, 0, bits, 0, bits.length);
         System.arraycopy(other.used, 0, used, 0, used.length);
     }
 
-    /**
-     * Verifie que la solution respecte la contrainte de capacite.
-     * Une solution invalide vaut 0 point, pas "presque le bon score".
-     */
     public void validateOrThrow() {
         for (int c = 0; c < in.C; c++) {
             int sum = 0;
@@ -88,7 +74,6 @@ public final class Solution {
         }
     }
 
-    /** Ecrit le fichier de soumission au format impose par l'enonce. */
     public void write(Path out) throws IOException {
         StringBuilder sb = new StringBuilder(1 << 20);
         int nonEmpty = 0;
@@ -103,3 +88,4 @@ public final class Solution {
         try (BufferedWriter w = Files.newBufferedWriter(out)) { w.write(sb.toString()); }
     }
 }
+

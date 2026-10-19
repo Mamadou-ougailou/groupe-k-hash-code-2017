@@ -12,6 +12,31 @@ import java.util.List;
 
 public class OutputWriter {
 
+    public static void extracteIntoFile(Problem problem, String outputFilePath) {
+        // 4. Output results to file
+        OutputWriter writer = new OutputWriter();
+        try {
+            writer.writeToFile(problem, outputFilePath);
+            System.out.println("Saved solution to: " + outputFilePath);
+        } catch (IOException e) {
+            System.err.println("Failed to write output file: " + e.getMessage());
+        }
+    }
+
+    public static String getOutputFilePath(String[] args, String inputFilePath) {
+        String outputFilePath;
+        if (args.length >= 2) {
+            outputFilePath = args[1];
+        } else {
+            File inputFile = new File(inputFilePath);
+            String name = inputFile.getName();
+            int dotIdx = name.lastIndexOf('.');
+            String baseName = (dotIdx > 0) ? name.substring(0, dotIdx) : name;
+            outputFilePath = "output/" + baseName + ".out";
+        }
+        return outputFilePath;
+    }
+
     /**
      * Prints the solution to the console in the exact format required by the Google Hash Code submission.
      */
