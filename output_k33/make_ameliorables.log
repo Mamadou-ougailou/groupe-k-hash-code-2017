@@ -1,0 +1,1193 @@
+make: Dépendance circulaire judge <- judge abandonnée.
+g++ -O3 judgeHashCode2017.cpp -o judge
+judgeHashCode2017.cpp: In function ‘int main(int, char**)’:
+judgeHashCode2017.cpp:60:9: warning: ignoring return value of ‘int fscanf(FILE*, const char*, ...)’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+   60 |   fscanf(input, "%d %d %d %d %d", &nbVideos, &nbEndpoints, &nbRequest, &nbCaches, &capacity);
+      |   ~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+judgeHashCode2017.cpp:64:11: warning: ignoring return value of ‘int fscanf(FILE*, const char*, ...)’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+   64 |     fscanf(input, "%d", size+i);
+      |     ~~~~~~^~~~~~~~~~~~~~~~~~~~~
+judgeHashCode2017.cpp:70:11: warning: ignoring return value of ‘int fscanf(FILE*, const char*, ...)’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+   70 |     fscanf(input, "%d %d", &l, &c);
+      |     ~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+judgeHashCode2017.cpp:75:13: warning: ignoring return value of ‘int fscanf(FILE*, const char*, ...)’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+   75 |       fscanf(input, "%d %d", &c, &l);
+      |       ~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+judgeHashCode2017.cpp:83:11: warning: ignoring return value of ‘int fscanf(FILE*, const char*, ...)’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+   83 |     fscanf(input, "%d %d %d", &v, &e, &n);
+      |     ~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+judgeHashCode2017.cpp:94:9: warning: ignoring return value of ‘int fscanf(FILE*, const char*, ...)’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+   94 |   fscanf(output, "%d", &nbUsedCache);
+      |   ~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+judgeHashCode2017.cpp:105:11: warning: ignoring return value of ‘int fscanf(FILE*, const char*, ...)’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+  105 |     fscanf(output, "%c", &r);
+      |     ~~~~~~^~~~~~~~~~~~~~~~~~
+judgeHashCode2017.cpp:107:13: warning: ignoring return value of ‘int fscanf(FILE*, const char*, ...)’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+  107 |       fscanf(output, "%d", &v);
+      |       ~~~~~~^~~~~~~~~~~~~~~~~~
+judgeHashCode2017.cpp:112:13: warning: ignoring return value of ‘int fscanf(FILE*, const char*, ...)’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+  112 |       fscanf(output, "%c", &r);
+      |       ~~~~~~^~~~~~~~~~~~~~~~~~
+javac -d out33a src/GoogleHash2017.java src/model/*.java src/io/*.java src/solver/*.java src/solver/impl/*.java src/solver/ils/*.java
+java -Xmx3g -Dils.seconds=1050 -Dils.threads=2 -cp out33a GoogleHash2017 instances_k/instance04.txt output_k33/instance04_K.txt
+Google Hash Code 2017 - Streaming Videos
+Running ILSSolver...
+ILS : budget = 1050 s, threads = 2
+  V=1000 E=100 R=1000 C=250 X=1800 | requetes=502417
+  endpoints : 0 orphelins, 25 mono-cache, 75 multi-cache
+  [1] glouton           = 1 902 183
+  [3] + sac a dos exact = 1 919 449
+    t=   5s  score=1 957 740
+    t=  10s  score=1 958 575
+    t=  15s  score=1 958 598
+    t=  20s  score=1 958 598
+    t=  25s  score=1 958 598
+    t=  30s  score=1 958 598
+    t=  35s  score=1 958 598
+    t=  40s  score=1 958 598
+    t=  45s  score=1 958 598
+    t=  50s  score=1 958 598
+    t=  55s  score=1 958 598
+    t=  60s  score=1 958 598
+    t=  65s  score=1 958 598
+    t=  70s  score=1 958 598
+    t=  75s  score=1 958 598
+    t=  80s  score=1 958 598
+    t=  85s  score=1 958 598
+    t=  90s  score=1 958 598
+    t=  95s  score=1 958 598
+    t= 100s  score=1 958 598
+    t= 105s  score=1 958 598
+    t= 110s  score=1 958 598
+    t= 115s  score=1 958 598
+    t= 120s  score=1 958 598
+    t= 125s  score=1 958 598
+    t= 130s  score=1 958 598
+    t= 135s  score=1 958 598
+    t= 140s  score=1 958 598
+    t= 145s  score=1 958 598
+    t= 150s  score=1 958 598
+    t= 155s  score=1 958 598
+    t= 160s  score=1 958 598
+    t= 165s  score=1 958 598
+    t= 170s  score=1 958 598
+    t= 175s  score=1 958 598
+    t= 180s  score=1 958 598
+    t= 185s  score=1 958 598
+    t= 190s  score=1 958 598
+    t= 195s  score=1 958 598
+    t= 200s  score=1 958 598
+    t= 205s  score=1 958 598
+    t= 210s  score=1 958 598
+    t= 215s  score=1 958 598
+    t= 220s  score=1 958 598
+    t= 225s  score=1 958 598
+    t= 230s  score=1 958 598
+    t= 235s  score=1 958 598
+    t= 240s  score=1 958 598
+    t= 245s  score=1 958 598
+    t= 250s  score=1 958 598
+    t= 255s  score=1 958 598
+    t= 260s  score=1 958 598
+    t= 265s  score=1 958 598
+    t= 270s  score=1 958 598
+    t= 275s  score=1 958 598
+    t= 280s  score=1 958 598
+    t= 285s  score=1 958 598
+    t= 290s  score=1 958 598
+    t= 295s  score=1 958 598
+    t= 300s  score=1 958 598
+    t= 305s  score=1 958 598
+    t= 310s  score=1 958 598
+    t= 315s  score=1 958 598
+    t= 320s  score=1 958 598
+    t= 325s  score=1 958 598
+    t= 330s  score=1 958 598
+    t= 335s  score=1 958 598
+    t= 340s  score=1 958 598
+    t= 345s  score=1 958 598
+    t= 350s  score=1 958 598
+    t= 355s  score=1 958 598
+    t= 360s  score=1 958 598
+    t= 365s  score=1 958 598
+    t= 370s  score=1 958 598
+    t= 375s  score=1 958 598
+    t= 380s  score=1 958 598
+    t= 385s  score=1 958 598
+    t= 390s  score=1 958 598
+    t= 395s  score=1 958 598
+    t= 400s  score=1 958 598
+    t= 405s  score=1 958 598
+    t= 410s  score=1 958 598
+    t= 415s  score=1 958 598
+    t= 420s  score=1 958 598
+    t= 425s  score=1 958 598
+    t= 430s  score=1 958 598
+    t= 435s  score=1 958 598
+    t= 440s  score=1 958 598
+    t= 445s  score=1 958 598
+    t= 450s  score=1 958 598
+    t= 455s  score=1 958 598
+    t= 460s  score=1 958 598
+    t= 465s  score=1 958 598
+    t= 470s  score=1 958 598
+    t= 475s  score=1 958 598
+    t= 480s  score=1 958 598
+    t= 485s  score=1 958 598
+    t= 490s  score=1 958 598
+    t= 495s  score=1 958 598
+    t= 500s  score=1 958 598
+    t= 505s  score=1 958 598
+    t= 510s  score=1 958 598
+    t= 515s  score=1 958 598
+    t= 520s  score=1 958 598
+    t= 525s  score=1 958 598
+    t= 530s  score=1 958 598
+    t= 535s  score=1 958 598
+    t= 540s  score=1 958 598
+    t= 545s  score=1 958 598
+    t= 550s  score=1 958 598
+    t= 555s  score=1 958 598
+    t= 560s  score=1 958 598
+    t= 565s  score=1 958 598
+    t= 570s  score=1 958 598
+    t= 575s  score=1 958 598
+    t= 580s  score=1 958 598
+    t= 585s  score=1 958 598
+    t= 590s  score=1 958 598
+    t= 595s  score=1 958 598
+    t= 600s  score=1 958 598
+    t= 605s  score=1 958 598
+    t= 610s  score=1 958 598
+    t= 615s  score=1 958 598
+    t= 620s  score=1 958 598
+    t= 625s  score=1 958 598
+    t= 630s  score=1 958 598
+    t= 635s  score=1 958 598
+    t= 640s  score=1 958 598
+    t= 645s  score=1 958 598
+    t= 650s  score=1 958 598
+    t= 655s  score=1 958 598
+    t= 660s  score=1 958 598
+    t= 665s  score=1 958 598
+    t= 670s  score=1 958 598
+    t= 675s  score=1 958 598
+    t= 680s  score=1 958 598
+    t= 685s  score=1 958 598
+    t= 690s  score=1 958 598
+    t= 695s  score=1 958 598
+    t= 700s  score=1 958 598
+    t= 705s  score=1 958 598
+    t= 710s  score=1 958 598
+    t= 715s  score=1 958 598
+    t= 720s  score=1 958 598
+    t= 725s  score=1 958 598
+    t= 730s  score=1 958 598
+    t= 735s  score=1 958 598
+    t= 740s  score=1 958 598
+    t= 745s  score=1 958 598
+    t= 750s  score=1 958 598
+    t= 755s  score=1 958 598
+    t= 760s  score=1 958 598
+    t= 765s  score=1 958 598
+    t= 770s  score=1 958 598
+    t= 775s  score=1 958 598
+    t= 780s  score=1 958 598
+    t= 785s  score=1 958 598
+    t= 790s  score=1 958 598
+    t= 795s  score=1 958 598
+    t= 800s  score=1 958 598
+    t= 805s  score=1 958 598
+    t= 810s  score=1 958 598
+    t= 815s  score=1 958 598
+    t= 820s  score=1 958 598
+    t= 825s  score=1 958 598
+    t= 830s  score=1 958 598
+    t= 835s  score=1 958 598
+    t= 840s  score=1 958 598
+    t= 845s  score=1 958 598
+    t= 850s  score=1 958 598
+    t= 855s  score=1 958 598
+    t= 860s  score=1 958 598
+    t= 865s  score=1 958 598
+    t= 870s  score=1 958 598
+    t= 875s  score=1 958 598
+    t= 880s  score=1 958 598
+    t= 885s  score=1 958 598
+    t= 890s  score=1 958 598
+    t= 895s  score=1 958 598
+    t= 900s  score=1 958 598
+    t= 905s  score=1 958 598
+    t= 910s  score=1 958 598
+    t= 915s  score=1 958 598
+    t= 920s  score=1 958 598
+    t= 925s  score=1 958 598
+    t= 930s  score=1 958 598
+    t= 935s  score=1 958 598
+    t= 940s  score=1 958 598
+    t= 945s  score=1 958 598
+    t= 950s  score=1 958 598
+    t= 955s  score=1 958 598
+    t= 960s  score=1 958 598
+    t= 965s  score=1 958 598
+    t= 970s  score=1 958 598
+    t= 975s  score=1 958 598
+    t= 980s  score=1 958 598
+    t= 985s  score=1 958 598
+    t= 990s  score=1 958 598
+    t= 995s  score=1 958 598
+    t=1000s  score=1 958 598
+    t=1005s  score=1 958 598
+    t=1010s  score=1 958 598
+    t=1015s  score=1 958 598
+    t=1020s  score=1 958 598
+    t=1025s  score=1 958 598
+    t=1030s  score=1 958 598
+    t=1035s  score=1 958 598
+    t=1040s  score=1 958 598
+    t=1045s  score=1 958 598
+    t=1050s  score=1 958 598
+    fusion : 121 kicks appliques, 116 refuses (conflit)
+  [4] + ILS (51416277 kicks)  = 1 958 598
+  >>> score = 1 958 598   (borne sup 2 134 119 - 91,8%)
+Saved solution to: output_k33/instance04_K.txt
+----------------------------------------
+Running Official Judge for instance04
+Score = 1958598
+----------------------------------------
+java -Xmx3g -Dils.seconds=1050 -Dils.threads=2 -cp out33a GoogleHash2017 instances_k/instance05.txt output_k33/instance05_K.txt
+Google Hash Code 2017 - Streaming Videos
+Running ILSSolver...
+ILS : budget = 1050 s, threads = 2
+  V=1000 E=100 R=90000 C=100 X=10 | requetes=9000000
+  endpoints : 0 orphelins, 0 mono-cache, 100 multi-cache
+  [1] glouton           = 5 234 013
+  [3] + sac a dos exact = 5 234 013
+    t=   5s  score=5 257 960
+    t=  10s  score=5 276 915
+    t=  15s  score=5 283 694
+    t=  20s  score=5 287 110
+    t=  25s  score=5 290 796
+    t=  30s  score=5 292 902
+    t=  35s  score=5 293 714
+    t=  40s  score=5 296 014
+    t=  45s  score=5 296 773
+    t=  50s  score=5 297 927
+    t=  55s  score=5 298 684
+    t=  60s  score=5 299 164
+    t=  65s  score=5 299 610
+    t=  70s  score=5 300 438
+    t=  75s  score=5 300 736
+    t=  80s  score=5 301 388
+    t=  85s  score=5 301 495
+    t=  90s  score=5 302 000
+    t=  95s  score=5 302 428
+    t= 100s  score=5 302 672
+    t= 105s  score=5 302 810
+    t= 110s  score=5 302 941
+    t= 115s  score=5 303 212
+    t= 120s  score=5 303 394
+    t= 125s  score=5 303 524
+    t= 130s  score=5 303 544
+    t= 135s  score=5 303 642
+    t= 140s  score=5 303 642
+    t= 145s  score=5 303 643
+    t= 150s  score=5 303 814
+    t= 155s  score=5 304 285
+    t= 160s  score=5 304 432
+    t= 165s  score=5 304 532
+    t= 170s  score=5 304 603
+    t= 175s  score=5 304 836
+    t= 180s  score=5 305 113
+    t= 185s  score=5 305 150
+    t= 190s  score=5 305 196
+    t= 195s  score=5 305 264
+    t= 200s  score=5 305 265
+    t= 205s  score=5 305 340
+    t= 210s  score=5 305 444
+    t= 215s  score=5 305 483
+    t= 220s  score=5 305 568
+    t= 225s  score=5 305 636
+    t= 230s  score=5 305 740
+    t= 235s  score=5 305 740
+    t= 240s  score=5 305 740
+    t= 245s  score=5 305 885
+    t= 250s  score=5 305 927
+    t= 255s  score=5 305 927
+    t= 260s  score=5 305 928
+    t= 265s  score=5 305 932
+    t= 270s  score=5 305 962
+    t= 275s  score=5 305 980
+    t= 280s  score=5 305 980
+    t= 285s  score=5 305 980
+    t= 290s  score=5 305 980
+    t= 295s  score=5 306 004
+    t= 300s  score=5 306 021
+    t= 305s  score=5 306 037
+    t= 310s  score=5 306 037
+    t= 315s  score=5 306 123
+    t= 320s  score=5 306 123
+    t= 325s  score=5 306 158
+    t= 330s  score=5 306 208
+    t= 335s  score=5 306 208
+    t= 340s  score=5 306 213
+    t= 345s  score=5 306 217
+    t= 350s  score=5 306 217
+    t= 355s  score=5 306 217
+    t= 360s  score=5 306 295
+    t= 365s  score=5 306 505
+    t= 370s  score=5 306 525
+    t= 375s  score=5 306 553
+    t= 380s  score=5 306 631
+    t= 385s  score=5 306 631
+    t= 390s  score=5 306 631
+    t= 395s  score=5 306 631
+    t= 400s  score=5 306 631
+    t= 405s  score=5 306 631
+    t= 410s  score=5 306 671
+    t= 415s  score=5 306 671
+    t= 420s  score=5 306 671
+    t= 425s  score=5 306 671
+    t= 430s  score=5 306 718
+    t= 435s  score=5 306 766
+    t= 440s  score=5 306 766
+    t= 445s  score=5 306 828
+    t= 450s  score=5 306 862
+    t= 455s  score=5 306 918
+    t= 460s  score=5 306 963
+    t= 465s  score=5 306 963
+    t= 470s  score=5 307 020
+    t= 475s  score=5 307 020
+    t= 480s  score=5 307 020
+    t= 485s  score=5 307 020
+    t= 490s  score=5 307 020
+    t= 495s  score=5 307 036
+    t= 500s  score=5 307 087
+    t= 505s  score=5 307 087
+    t= 510s  score=5 307 087
+    t= 515s  score=5 307 101
+    t= 520s  score=5 307 102
+    t= 525s  score=5 307 102
+    t= 530s  score=5 307 123
+    t= 535s  score=5 307 123
+    t= 540s  score=5 307 136
+    t= 545s  score=5 307 136
+    t= 550s  score=5 307 136
+    t= 555s  score=5 307 136
+    t= 560s  score=5 307 136
+    t= 565s  score=5 307 136
+    t= 570s  score=5 307 136
+    t= 575s  score=5 307 152
+    t= 580s  score=5 307 153
+    t= 585s  score=5 307 153
+    t= 590s  score=5 307 153
+    t= 595s  score=5 307 153
+    t= 600s  score=5 307 153
+    t= 605s  score=5 307 153
+    t= 610s  score=5 307 153
+    t= 615s  score=5 307 153
+    t= 620s  score=5 307 153
+    t= 625s  score=5 307 153
+    t= 630s  score=5 307 153
+    t= 635s  score=5 307 153
+    t= 640s  score=5 307 156
+    t= 645s  score=5 307 156
+    t= 650s  score=5 307 156
+    t= 655s  score=5 307 163
+    t= 660s  score=5 307 163
+    t= 665s  score=5 307 163
+    t= 670s  score=5 307 163
+    t= 675s  score=5 307 178
+    t= 680s  score=5 307 178
+    t= 685s  score=5 307 178
+    t= 690s  score=5 307 210
+    t= 695s  score=5 307 210
+    t= 700s  score=5 307 210
+    t= 705s  score=5 307 210
+    t= 710s  score=5 307 210
+    t= 715s  score=5 307 210
+    t= 720s  score=5 307 210
+    t= 725s  score=5 307 210
+    t= 730s  score=5 307 246
+    t= 735s  score=5 307 274
+    t= 740s  score=5 307 274
+    t= 745s  score=5 307 274
+    t= 750s  score=5 307 275
+    t= 755s  score=5 307 291
+    t= 760s  score=5 307 291
+    t= 765s  score=5 307 291
+    t= 770s  score=5 307 341
+    t= 775s  score=5 307 375
+    t= 780s  score=5 307 381
+    t= 785s  score=5 307 381
+    t= 790s  score=5 307 381
+    t= 795s  score=5 307 390
+    t= 800s  score=5 307 390
+    t= 805s  score=5 307 423
+    t= 810s  score=5 307 423
+    t= 815s  score=5 307 423
+    t= 820s  score=5 307 423
+    t= 825s  score=5 307 445
+    t= 830s  score=5 307 558
+    t= 835s  score=5 307 558
+    t= 840s  score=5 307 608
+    t= 845s  score=5 307 608
+    t= 850s  score=5 307 624
+    t= 855s  score=5 307 624
+    t= 860s  score=5 307 624
+    t= 865s  score=5 307 624
+    t= 870s  score=5 307 624
+    t= 875s  score=5 307 624
+    t= 880s  score=5 307 665
+    t= 885s  score=5 307 665
+    t= 890s  score=5 307 665
+    t= 895s  score=5 307 665
+    t= 900s  score=5 307 665
+    t= 905s  score=5 307 665
+    t= 910s  score=5 307 665
+    t= 915s  score=5 307 665
+    t= 920s  score=5 307 676
+    t= 925s  score=5 307 676
+    t= 930s  score=5 307 698
+    t= 935s  score=5 307 698
+    t= 940s  score=5 307 702
+    t= 945s  score=5 307 711
+    t= 950s  score=5 307 711
+    t= 955s  score=5 307 711
+    t= 960s  score=5 307 711
+    t= 965s  score=5 307 711
+    t= 970s  score=5 307 711
+    t= 975s  score=5 307 711
+    t= 980s  score=5 307 711
+    t= 985s  score=5 307 711
+    t= 990s  score=5 307 783
+    t= 995s  score=5 307 783
+    t=1000s  score=5 307 783
+    t=1005s  score=5 307 783
+    t=1010s  score=5 307 783
+    t=1015s  score=5 307 783
+    t=1020s  score=5 307 783
+    t=1025s  score=5 307 795
+    t=1030s  score=5 307 795
+    t=1035s  score=5 307 807
+    t=1040s  score=5 307 807
+    t=1045s  score=5 307 807
+    t=1049s  score=5 307 807
+    fusion : 377 kicks appliques, 99 refuses (conflit)
+  [4] + ILS (197225 kicks)  = 5 307 807
+  >>> score = 5 307 807   (borne sup 10 000 000 - 53,1%)
+Saved solution to: output_k33/instance05_K.txt
+----------------------------------------
+Running Official Judge for instance05
+Score = 5307807
+----------------------------------------
+java -Xmx3g -Dils.seconds=1050 -Dils.threads=2 -cp out33a GoogleHash2017 instances_k/instance08.txt output_k33/instance08_K.txt
+Google Hash Code 2017 - Streaming Videos
+Running ILSSolver...
+ILS : budget = 1050 s, threads = 2
+  V=3000 E=80 R=216017 C=15 X=2000 | requetes=65010731
+  endpoints : 0 orphelins, 0 mono-cache, 80 multi-cache
+  [1] glouton           = 53 125
+  [3] + sac a dos exact = 53 189
+    graines : 53 205 53 239 
+  [4] + ILS (75824 kicks)  = 53 239
+  >>> score = 53 239   (borne sup 510 113 - 10,4%)
+Saved solution to: output_k33/instance08_K.txt
+----------------------------------------
+Running Official Judge for instance08
+Score = 53239
+----------------------------------------
+java -Xmx3g -Dils.seconds=1050 -Dils.threads=2 -cp out33a GoogleHash2017 instances_k/instance12.txt output_k33/instance12_K.txt
+Google Hash Code 2017 - Streaming Videos
+Running ILSSolver...
+ILS : budget = 1050 s, threads = 2
+  V=8000 E=2196 R=136928 C=409 X=50000 | requetes=34254093
+  endpoints : 6 orphelins, 565 mono-cache, 1625 multi-cache
+  [1] glouton           = 328 675
+  [3] + sac a dos exact = 329 664
+    t=   5s  score=330 090
+    t=  10s  score=330 366
+    t=  15s  score=330 595
+    t=  20s  score=330 754
+    t=  25s  score=330 867
+    t=  30s  score=330 939
+    t=  35s  score=330 983
+    t=  40s  score=331 037
+    t=  45s  score=331 068
+    t=  50s  score=331 102
+    t=  55s  score=331 146
+    t=  60s  score=331 180
+    t=  65s  score=331 201
+    t=  70s  score=331 222
+    t=  75s  score=331 240
+    t=  80s  score=331 250
+    t=  85s  score=331 259
+    t=  90s  score=331 275
+    t=  95s  score=331 286
+    t= 100s  score=331 300
+    t= 105s  score=331 307
+    t= 110s  score=331 318
+    t= 115s  score=331 320
+    t= 120s  score=331 328
+    t= 125s  score=331 333
+    t= 130s  score=331 339
+    t= 135s  score=331 341
+    t= 140s  score=331 345
+    t= 145s  score=331 357
+    t= 150s  score=331 360
+    t= 155s  score=331 364
+    t= 160s  score=331 373
+    t= 165s  score=331 376
+    t= 170s  score=331 379
+    t= 175s  score=331 381
+    t= 180s  score=331 385
+    t= 185s  score=331 385
+    t= 190s  score=331 393
+    t= 195s  score=331 396
+    t= 200s  score=331 398
+    t= 205s  score=331 400
+    t= 210s  score=331 402
+    t= 215s  score=331 407
+    t= 220s  score=331 412
+    t= 225s  score=331 424
+    t= 230s  score=331 424
+    t= 235s  score=331 426
+    t= 240s  score=331 429
+    t= 245s  score=331 435
+    t= 250s  score=331 442
+    t= 255s  score=331 445
+    t= 260s  score=331 448
+    t= 265s  score=331 453
+    t= 270s  score=331 453
+    t= 275s  score=331 455
+    t= 280s  score=331 456
+    t= 285s  score=331 461
+    t= 290s  score=331 461
+    t= 295s  score=331 461
+    t= 300s  score=331 463
+    t= 305s  score=331 463
+    t= 310s  score=331 463
+    t= 315s  score=331 463
+    t= 320s  score=331 464
+    t= 325s  score=331 464
+    t= 330s  score=331 464
+    t= 335s  score=331 469
+    t= 340s  score=331 469
+    t= 345s  score=331 474
+    t= 350s  score=331 475
+    t= 355s  score=331 477
+    t= 360s  score=331 478
+    t= 365s  score=331 481
+    t= 370s  score=331 482
+    t= 375s  score=331 485
+    t= 380s  score=331 485
+    t= 385s  score=331 487
+    t= 390s  score=331 490
+    t= 395s  score=331 491
+    t= 400s  score=331 492
+    t= 405s  score=331 493
+    t= 410s  score=331 493
+    t= 415s  score=331 493
+    t= 420s  score=331 493
+    t= 425s  score=331 496
+    t= 430s  score=331 497
+    t= 435s  score=331 500
+    t= 440s  score=331 501
+    t= 445s  score=331 503
+    t= 450s  score=331 503
+    t= 455s  score=331 505
+    t= 460s  score=331 505
+    t= 465s  score=331 505
+    t= 470s  score=331 507
+    t= 475s  score=331 508
+    t= 480s  score=331 508
+    t= 485s  score=331 508
+    t= 490s  score=331 509
+    t= 495s  score=331 509
+    t= 500s  score=331 510
+    t= 505s  score=331 510
+    t= 510s  score=331 510
+    t= 515s  score=331 511
+    t= 520s  score=331 511
+    t= 525s  score=331 511
+    t= 530s  score=331 512
+    t= 535s  score=331 513
+    t= 540s  score=331 514
+    t= 545s  score=331 514
+    t= 550s  score=331 514
+    t= 555s  score=331 514
+    t= 560s  score=331 514
+    t= 565s  score=331 514
+    t= 570s  score=331 514
+    t= 575s  score=331 515
+    t= 580s  score=331 515
+    t= 585s  score=331 515
+    t= 590s  score=331 515
+    t= 595s  score=331 515
+    t= 600s  score=331 515
+    t= 605s  score=331 516
+    t= 610s  score=331 518
+    t= 615s  score=331 518
+    t= 620s  score=331 518
+    t= 625s  score=331 519
+    t= 630s  score=331 520
+    t= 635s  score=331 521
+    t= 640s  score=331 525
+    t= 645s  score=331 529
+    t= 650s  score=331 535
+    t= 655s  score=331 535
+    t= 660s  score=331 535
+    t= 665s  score=331 535
+    t= 670s  score=331 535
+    t= 675s  score=331 535
+    t= 680s  score=331 535
+    t= 685s  score=331 536
+    t= 690s  score=331 538
+    t= 695s  score=331 538
+    t= 700s  score=331 539
+    t= 705s  score=331 539
+    t= 710s  score=331 539
+    t= 715s  score=331 540
+    t= 720s  score=331 540
+    t= 725s  score=331 541
+    t= 730s  score=331 541
+    t= 735s  score=331 542
+    t= 740s  score=331 543
+    t= 745s  score=331 543
+    t= 750s  score=331 544
+    t= 755s  score=331 546
+    t= 760s  score=331 546
+    t= 765s  score=331 547
+    t= 770s  score=331 547
+    t= 775s  score=331 547
+    t= 780s  score=331 547
+    t= 785s  score=331 548
+    t= 790s  score=331 548
+    t= 795s  score=331 548
+    t= 800s  score=331 548
+    t= 805s  score=331 549
+    t= 810s  score=331 549
+    t= 815s  score=331 549
+    t= 820s  score=331 549
+    t= 825s  score=331 549
+    t= 830s  score=331 549
+    t= 835s  score=331 549
+    t= 840s  score=331 550
+    t= 845s  score=331 550
+    t= 850s  score=331 551
+    t= 855s  score=331 551
+    t= 860s  score=331 551
+    t= 865s  score=331 551
+    t= 870s  score=331 552
+    t= 875s  score=331 552
+    t= 880s  score=331 552
+    t= 885s  score=331 552
+    t= 890s  score=331 553
+    t= 895s  score=331 553
+    t= 900s  score=331 554
+    t= 905s  score=331 554
+    t= 910s  score=331 554
+    t= 915s  score=331 555
+    t= 920s  score=331 555
+    t= 925s  score=331 555
+    t= 930s  score=331 556
+    t= 935s  score=331 556
+    t= 940s  score=331 556
+    t= 945s  score=331 556
+    t= 950s  score=331 556
+    t= 955s  score=331 556
+    t= 960s  score=331 559
+    t= 965s  score=331 561
+    t= 970s  score=331 561
+    t= 975s  score=331 561
+    t= 980s  score=331 561
+    t= 985s  score=331 565
+    t= 990s  score=331 565
+    t= 995s  score=331 565
+    t=1000s  score=331 565
+    t=1005s  score=331 565
+    t=1010s  score=331 566
+    t=1015s  score=331 569
+    t=1020s  score=331 569
+    t=1025s  score=331 570
+    t=1030s  score=331 572
+    t=1035s  score=331 573
+    t=1040s  score=331 576
+    t=1045s  score=331 577
+    t=1047s  score=331 577
+    fusion : 1028 kicks appliques, 139 refuses (conflit)
+  [4] + ILS (571781 kicks)  = 331 577
+  >>> score = 331 577   (borne sup 589 967 - 56,2%)
+Saved solution to: output_k33/instance12_K.txt
+----------------------------------------
+Running Official Judge for instance12
+Score = 331577
+----------------------------------------
+java -Xmx3g -Dils.seconds=1050 -Dils.threads=2 -cp out33a GoogleHash2017 instances_k/instance10.txt output_k33/instance10_K.txt
+Google Hash Code 2017 - Streaming Videos
+Running ILSSolver...
+ILS : budget = 1050 s, threads = 2
+  V=5000 E=500 R=200289 C=200 X=385 | requetes=321545438
+  endpoints : 0 orphelins, 0 mono-cache, 500 multi-cache
+  [1] glouton           = 580 600
+  [3] + sac a dos exact = 581 094
+    t=   5s  score=581 187
+    t=  10s  score=581 262
+    t=  15s  score=581 309
+    t=  20s  score=581 413
+    t=  25s  score=581 424
+    t=  30s  score=581 431
+    t=  35s  score=581 456
+    t=  40s  score=581 472
+    t=  45s  score=581 505
+    t=  50s  score=581 534
+    t=  55s  score=581 566
+    t=  60s  score=581 596
+    t=  65s  score=581 623
+    t=  70s  score=581 633
+    t=  75s  score=581 647
+    t=  80s  score=581 658
+    t=  85s  score=581 664
+    t=  90s  score=581 678
+    t=  95s  score=581 700
+    t= 100s  score=581 708
+    t= 105s  score=581 724
+    t= 110s  score=581 737
+    t= 115s  score=581 741
+    t= 120s  score=581 760
+    t= 125s  score=581 768
+    t= 130s  score=581 774
+    t= 135s  score=581 788
+    t= 140s  score=581 796
+    t= 145s  score=581 798
+    t= 150s  score=581 807
+    t= 155s  score=581 837
+    t= 160s  score=581 853
+    t= 165s  score=581 857
+    t= 170s  score=581 862
+    t= 175s  score=581 871
+    t= 180s  score=581 881
+    t= 185s  score=581 882
+    t= 190s  score=581 887
+    t= 195s  score=581 891
+    t= 200s  score=581 900
+    t= 205s  score=581 901
+    t= 210s  score=581 916
+    t= 215s  score=581 916
+    t= 220s  score=581 921
+    t= 225s  score=581 924
+    t= 230s  score=581 940
+    t= 235s  score=581 946
+    t= 240s  score=581 963
+    t= 245s  score=581 966
+    t= 250s  score=581 976
+    t= 255s  score=581 986
+    t= 260s  score=582 003
+    t= 265s  score=582 008
+    t= 270s  score=582 020
+    t= 275s  score=582 027
+    t= 280s  score=582 048
+    t= 285s  score=582 049
+    t= 290s  score=582 053
+    t= 295s  score=582 058
+    t= 300s  score=582 071
+    t= 305s  score=582 084
+    t= 310s  score=582 085
+    t= 315s  score=582 088
+    t= 320s  score=582 091
+    t= 325s  score=582 100
+    t= 330s  score=582 102
+    t= 335s  score=582 111
+    t= 340s  score=582 115
+    t= 345s  score=582 121
+    t= 350s  score=582 128
+    t= 355s  score=582 143
+    t= 360s  score=582 150
+    t= 365s  score=582 155
+    t= 370s  score=582 163
+    t= 375s  score=582 169
+    t= 380s  score=582 171
+    t= 385s  score=582 178
+    t= 390s  score=582 182
+    t= 395s  score=582 185
+    t= 400s  score=582 187
+    t= 405s  score=582 191
+    t= 410s  score=582 193
+    t= 415s  score=582 205
+    t= 420s  score=582 209
+    t= 425s  score=582 210
+    t= 430s  score=582 215
+    t= 435s  score=582 220
+    t= 440s  score=582 223
+    t= 445s  score=582 227
+    t= 450s  score=582 228
+    t= 455s  score=582 228
+    t= 460s  score=582 230
+    t= 465s  score=582 231
+    t= 470s  score=582 235
+    t= 475s  score=582 235
+    t= 480s  score=582 237
+    t= 485s  score=582 242
+    t= 490s  score=582 245
+    t= 495s  score=582 250
+    t= 500s  score=582 252
+    t= 505s  score=582 255
+    t= 510s  score=582 255
+    t= 515s  score=582 256
+    t= 520s  score=582 257
+    t= 525s  score=582 263
+    t= 530s  score=582 267
+    t= 535s  score=582 270
+    t= 540s  score=582 273
+    t= 545s  score=582 277
+    t= 550s  score=582 279
+    t= 555s  score=582 280
+    t= 560s  score=582 281
+    t= 565s  score=582 282
+    t= 570s  score=582 282
+    t= 575s  score=582 282
+    t= 580s  score=582 282
+    t= 585s  score=582 282
+    t= 590s  score=582 290
+    t= 595s  score=582 293
+    t= 600s  score=582 293
+    t= 605s  score=582 293
+    t= 610s  score=582 295
+    t= 615s  score=582 295
+    t= 620s  score=582 295
+    t= 625s  score=582 295
+    t= 630s  score=582 295
+    t= 635s  score=582 295
+    t= 640s  score=582 296
+    t= 645s  score=582 297
+    t= 650s  score=582 303
+    t= 655s  score=582 303
+    t= 660s  score=582 303
+    t= 665s  score=582 304
+    t= 670s  score=582 305
+    t= 675s  score=582 305
+    t= 680s  score=582 305
+    t= 685s  score=582 308
+    t= 690s  score=582 310
+    t= 695s  score=582 310
+    t= 700s  score=582 311
+    t= 705s  score=582 321
+    t= 710s  score=582 323
+    t= 715s  score=582 329
+    t= 720s  score=582 332
+    t= 725s  score=582 337
+    t= 730s  score=582 341
+    t= 735s  score=582 349
+    t= 740s  score=582 351
+    t= 745s  score=582 357
+    t= 750s  score=582 359
+    t= 755s  score=582 362
+    t= 760s  score=582 363
+    t= 765s  score=582 364
+    t= 770s  score=582 369
+    t= 775s  score=582 371
+    t= 780s  score=582 378
+    t= 785s  score=582 379
+    t= 790s  score=582 380
+    t= 795s  score=582 380
+    t= 800s  score=582 380
+    t= 805s  score=582 380
+    t= 810s  score=582 380
+    t= 815s  score=582 380
+    t= 820s  score=582 380
+    t= 825s  score=582 380
+    t= 830s  score=582 380
+    t= 835s  score=582 380
+    t= 840s  score=582 384
+    t= 845s  score=582 386
+    t= 850s  score=582 386
+    t= 855s  score=582 390
+    t= 860s  score=582 393
+    t= 865s  score=582 395
+    t= 870s  score=582 399
+    t= 875s  score=582 400
+    t= 880s  score=582 403
+    t= 885s  score=582 406
+    t= 890s  score=582 406
+    t= 895s  score=582 406
+    t= 900s  score=582 407
+    t= 905s  score=582 407
+    t= 910s  score=582 409
+    t= 915s  score=582 413
+    t= 920s  score=582 416
+    t= 925s  score=582 416
+    t= 930s  score=582 418
+    t= 935s  score=582 422
+    t= 940s  score=582 426
+    t= 945s  score=582 428
+    t= 950s  score=582 428
+    t= 955s  score=582 429
+    t= 960s  score=582 432
+    t= 965s  score=582 438
+    t= 970s  score=582 438
+    t= 975s  score=582 441
+    t= 980s  score=582 444
+    t= 985s  score=582 444
+    t= 990s  score=582 446
+    t= 995s  score=582 448
+    t=1000s  score=582 451
+    t=1005s  score=582 454
+    t=1010s  score=582 464
+    t=1015s  score=582 466
+    t=1020s  score=582 467
+    t=1025s  score=582 473
+    t=1030s  score=582 473
+    t=1035s  score=582 476
+    t=1040s  score=582 477
+    t=1045s  score=582 485
+    t=1046s  score=582 485
+    fusion : 767 kicks appliques, 67 refuses (conflit)
+  [4] + ILS (249891 kicks)  = 582 485
+  >>> score = 582 485   (borne sup 1 046 876 - 55,6%)
+Saved solution to: output_k33/instance10_K.txt
+----------------------------------------
+Running Official Judge for instance10
+Score = 582485
+----------------------------------------
+java -Xmx3g -Dils.seconds=1050 -Dils.threads=2 -cp out33a GoogleHash2017 instances_k/instance11.txt output_k33/instance11_K.txt
+Google Hash Code 2017 - Streaming Videos
+Running ILSSolver...
+ILS : budget = 1050 s, threads = 2
+  V=8000 E=110 R=399997 C=40 X=3000 | requetes=2555146332
+  endpoints : 0 orphelins, 0 mono-cache, 110 multi-cache
+  [1] glouton           = 131 569
+  [3] + sac a dos exact = 131 823
+    t=   5s  score=132 053
+    t=  10s  score=132 195
+    t=  15s  score=132 284
+    t=  20s  score=132 389
+    t=  25s  score=132 451
+    t=  30s  score=132 526
+    t=  35s  score=132 578
+    t=  40s  score=132 594
+    t=  45s  score=132 618
+    t=  50s  score=132 640
+    t=  55s  score=132 663
+    t=  60s  score=132 677
+    t=  65s  score=132 701
+    t=  70s  score=132 730
+    t=  75s  score=132 747
+    t=  80s  score=132 761
+    t=  85s  score=132 762
+    t=  90s  score=132 775
+    t=  95s  score=132 799
+    t= 100s  score=132 818
+    t= 105s  score=132 824
+    t= 110s  score=132 828
+    t= 115s  score=132 832
+    t= 120s  score=132 832
+    t= 125s  score=132 844
+    t= 130s  score=132 846
+    t= 135s  score=132 855
+    t= 140s  score=132 859
+    t= 145s  score=132 866
+    t= 150s  score=132 873
+    t= 155s  score=132 883
+    t= 160s  score=132 885
+    t= 165s  score=132 889
+    t= 170s  score=132 893
+    t= 175s  score=132 898
+    t= 180s  score=132 900
+    t= 185s  score=132 908
+    t= 190s  score=132 908
+    t= 195s  score=132 912
+    t= 200s  score=132 920
+    t= 205s  score=132 921
+    t= 210s  score=132 922
+    t= 215s  score=132 926
+    t= 220s  score=132 927
+    t= 225s  score=132 934
+    t= 230s  score=132 935
+    t= 235s  score=132 936
+    t= 240s  score=132 936
+    t= 245s  score=132 936
+    t= 250s  score=132 937
+    t= 255s  score=132 938
+    t= 260s  score=132 938
+    t= 265s  score=132 943
+    t= 270s  score=132 943
+    t= 275s  score=132 944
+    t= 280s  score=132 946
+    t= 285s  score=132 946
+    t= 290s  score=132 946
+    t= 295s  score=132 948
+    t= 300s  score=132 957
+    t= 305s  score=132 959
+    t= 310s  score=132 959
+    t= 315s  score=132 961
+    t= 320s  score=132 966
+    t= 325s  score=132 968
+    t= 330s  score=132 970
+    t= 335s  score=132 972
+    t= 340s  score=132 972
+    t= 345s  score=132 974
+    t= 350s  score=132 975
+    t= 355s  score=132 975
+    t= 360s  score=132 977
+    t= 365s  score=132 977
+    t= 370s  score=132 982
+    t= 375s  score=132 983
+    t= 380s  score=132 985
+    t= 385s  score=132 987
+    t= 390s  score=132 991
+    t= 395s  score=132 994
+    t= 400s  score=132 997
+    t= 405s  score=132 999
+    t= 410s  score=132 999
+    t= 415s  score=132 999
+    t= 420s  score=133 000
+    t= 425s  score=133 001
+    t= 430s  score=133 001
+    t= 435s  score=133 003
+    t= 440s  score=133 003
+    t= 445s  score=133 004
+    t= 450s  score=133 005
+    t= 455s  score=133 006
+    t= 460s  score=133 006
+    t= 465s  score=133 008
+    t= 470s  score=133 008
+    t= 475s  score=133 008
+    t= 480s  score=133 008
+    t= 485s  score=133 008
+    t= 490s  score=133 008
+    t= 495s  score=133 008
+    t= 500s  score=133 008
+    t= 505s  score=133 008
+    t= 510s  score=133 009
+    t= 515s  score=133 009
+    t= 520s  score=133 009
+    t= 525s  score=133 010
+    t= 530s  score=133 010
+    t= 535s  score=133 010
+    t= 540s  score=133 010
+    t= 545s  score=133 011
+    t= 550s  score=133 012
+    t= 555s  score=133 012
+    t= 560s  score=133 014
+    t= 565s  score=133 014
+    t= 570s  score=133 014
+    t= 575s  score=133 014
+    t= 580s  score=133 014
+    t= 585s  score=133 014
+    t= 590s  score=133 014
+    t= 595s  score=133 014
+    t= 600s  score=133 014
+    t= 605s  score=133 014
+    t= 610s  score=133 018
+    t= 615s  score=133 018
+    t= 620s  score=133 019
+    t= 625s  score=133 021
+    t= 630s  score=133 021
+    t= 635s  score=133 022
+    t= 640s  score=133 022
+    t= 645s  score=133 022
+    t= 650s  score=133 022
+    t= 655s  score=133 022
+    t= 660s  score=133 022
+    t= 665s  score=133 022
+    t= 670s  score=133 022
+    t= 675s  score=133 022
+    t= 680s  score=133 023
+    t= 685s  score=133 024
+    t= 690s  score=133 024
+    t= 695s  score=133 024
+    t= 700s  score=133 024
+    t= 705s  score=133 024
+    t= 710s  score=133 026
+    t= 715s  score=133 028
+    t= 720s  score=133 028
+    t= 725s  score=133 028
+    t= 730s  score=133 028
+    t= 735s  score=133 028
+    t= 740s  score=133 028
+    t= 745s  score=133 028
+    t= 750s  score=133 028
+    t= 755s  score=133 028
+    t= 760s  score=133 028
+    t= 765s  score=133 028
+    t= 770s  score=133 029
+    t= 775s  score=133 029
+    t= 780s  score=133 029
+    t= 785s  score=133 029
+    t= 790s  score=133 029
+    t= 795s  score=133 029
+    t= 800s  score=133 029
+    t= 805s  score=133 029
+    t= 810s  score=133 029
+    t= 815s  score=133 029
+    t= 820s  score=133 029
+    t= 825s  score=133 029
+    t= 830s  score=133 029
+    t= 835s  score=133 031
+    t= 840s  score=133 032
+    t= 845s  score=133 032
+    t= 850s  score=133 032
+    t= 855s  score=133 033
+    t= 860s  score=133 033
+    t= 865s  score=133 034
+    t= 870s  score=133 034
+    t= 875s  score=133 034
+    t= 880s  score=133 035
+    t= 885s  score=133 035
+    t= 890s  score=133 035
+    t= 895s  score=133 035
+    t= 900s  score=133 035
+    t= 905s  score=133 035
+    t= 910s  score=133 036
+    t= 915s  score=133 037
+    t= 920s  score=133 037
+    t= 925s  score=133 037
+    t= 930s  score=133 037
+    t= 935s  score=133 037
+    t= 940s  score=133 037
+    t= 945s  score=133 037
+    t= 950s  score=133 037
+    t= 955s  score=133 037
+    t= 960s  score=133 037
+    t= 965s  score=133 043
+    t= 970s  score=133 045
+    t= 975s  score=133 045
+    t= 980s  score=133 046
+    t= 985s  score=133 047
+    t= 990s  score=133 050
+    t= 995s  score=133 052
+    t=1000s  score=133 052
+    t=1005s  score=133 052
+    t=1010s  score=133 053
+    t=1015s  score=133 053
+    t=1020s  score=133 055
+    t=1025s  score=133 055
+    t=1030s  score=133 055
+    t=1035s  score=133 055
+    t=1040s  score=133 057
+    t=1045s  score=133 057
+    t=1049s  score=133 057
+    fusion : 483 kicks appliques, 96 refuses (conflit)
+  [4] + ILS (215728 kicks)  = 133 057
+  >>> score = 133 057   (borne sup 406 675 - 32,7%)
+Saved solution to: output_k33/instance11_K.txt
+----------------------------------------
+Running Official Judge for instance11
+Score = 133057
+----------------------------------------
+java -Xmx3g -Dils.seconds=1050 -Dils.threads=2 -cp out33a GoogleHash2017 instances_k/instance14.txt output_k33/instance14_K.txt
+Google Hash Code 2017 - Streaming Videos
+Running ILSSolver...
+ILS : budget = 1050 s, threads = 2
+  V=10000 E=115 R=998964 C=20 X=2000 | requetes=6383303889
+  endpoints : 0 orphelins, 0 mono-cache, 115 multi-cache
+  [1] glouton           = 57 197
+  [3] + sac a dos exact = 57 278
+    graines : 57 279 57 279 
+  [4] + ILS (30513 kicks)  = 57 279
+  >>> score = 57 279   (borne sup 406 879 - 14,1%)
+Saved solution to: output_k33/instance14_K.txt
+----------------------------------------
+Running Official Judge for instance14
+Score = 57279
+----------------------------------------

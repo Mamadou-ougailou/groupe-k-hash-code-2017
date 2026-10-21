@@ -1,0 +1,494 @@
+make: Dépendance circulaire judge <- judge abandonnée.
+g++ -O3 judgeHashCode2017.cpp -o judge
+judgeHashCode2017.cpp: In function ‘int main(int, char**)’:
+judgeHashCode2017.cpp:60:9: warning: ignoring return value of ‘int fscanf(FILE*, const char*, ...)’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+   60 |   fscanf(input, "%d %d %d %d %d", &nbVideos, &nbEndpoints, &nbRequest, &nbCaches, &capacity);
+      |   ~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+judgeHashCode2017.cpp:64:11: warning: ignoring return value of ‘int fscanf(FILE*, const char*, ...)’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+   64 |     fscanf(input, "%d", size+i);
+      |     ~~~~~~^~~~~~~~~~~~~~~~~~~~~
+judgeHashCode2017.cpp:70:11: warning: ignoring return value of ‘int fscanf(FILE*, const char*, ...)’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+   70 |     fscanf(input, "%d %d", &l, &c);
+      |     ~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+judgeHashCode2017.cpp:75:13: warning: ignoring return value of ‘int fscanf(FILE*, const char*, ...)’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+   75 |       fscanf(input, "%d %d", &c, &l);
+      |       ~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+judgeHashCode2017.cpp:83:11: warning: ignoring return value of ‘int fscanf(FILE*, const char*, ...)’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+   83 |     fscanf(input, "%d %d %d", &v, &e, &n);
+      |     ~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+judgeHashCode2017.cpp:94:9: warning: ignoring return value of ‘int fscanf(FILE*, const char*, ...)’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+   94 |   fscanf(output, "%d", &nbUsedCache);
+      |   ~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+judgeHashCode2017.cpp:105:11: warning: ignoring return value of ‘int fscanf(FILE*, const char*, ...)’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+  105 |     fscanf(output, "%c", &r);
+      |     ~~~~~~^~~~~~~~~~~~~~~~~~
+judgeHashCode2017.cpp:107:13: warning: ignoring return value of ‘int fscanf(FILE*, const char*, ...)’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+  107 |       fscanf(output, "%d", &v);
+      |       ~~~~~~^~~~~~~~~~~~~~~~~~
+judgeHashCode2017.cpp:112:13: warning: ignoring return value of ‘int fscanf(FILE*, const char*, ...)’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+  112 |       fscanf(output, "%c", &r);
+      |       ~~~~~~^~~~~~~~~~~~~~~~~~
+javac -d out33b src/GoogleHash2017.java src/model/*.java src/io/*.java src/solver/*.java src/solver/impl/*.java src/solver/ils/*.java
+java -Xmx3g -Dils.seconds=240 -Dils.threads=1 -cp out33b GoogleHash2017 instances_k/instance01.txt output_k33/instance01_K.txt
+Google Hash Code 2017 - Streaming Videos
+Running ILSSolver...
+ILS : budget = 240 s, threads = 1
+  V=356 E=240 R=396 C=240 X=100 | requetes=526233
+  endpoints : 0 orphelins, 100 mono-cache, 140 multi-cache
+  [1] glouton           = 646 788
+  [3] + sac a dos exact = 867 592
+    t=   5s  score=1 005 593
+    t=  10s  score=1 005 593
+    t=  15s  score=1 005 593
+    t=  20s  score=1 005 593
+    t=  25s  score=1 005 593
+    t=  30s  score=1 005 593
+    t=  35s  score=1 005 593
+    t=  40s  score=1 005 593
+    t=  45s  score=1 005 593
+    t=  50s  score=1 005 593
+    t=  55s  score=1 005 593
+    t=  60s  score=1 005 593
+    t=  65s  score=1 005 593
+    t=  70s  score=1 005 593
+    t=  75s  score=1 005 593
+    t=  80s  score=1 005 593
+    t=  85s  score=1 005 593
+    t=  90s  score=1 005 593
+    t=  95s  score=1 005 593
+    t= 100s  score=1 005 593
+    t= 105s  score=1 005 593
+    t= 110s  score=1 005 593
+    t= 115s  score=1 005 593
+    t= 120s  score=1 005 593
+    t= 125s  score=1 005 593
+    t= 130s  score=1 005 593
+    t= 135s  score=1 005 593
+    t= 140s  score=1 005 593
+    t= 145s  score=1 005 593
+    t= 150s  score=1 005 593
+    t= 155s  score=1 005 593
+    t= 160s  score=1 005 593
+    t= 165s  score=1 005 593
+    t= 170s  score=1 005 593
+    t= 175s  score=1 005 593
+    t= 180s  score=1 005 593
+    t= 185s  score=1 005 593
+    t= 190s  score=1 005 593
+    t= 195s  score=1 005 593
+    t= 200s  score=1 005 593
+    t= 205s  score=1 005 593
+    t= 210s  score=1 005 593
+    t= 215s  score=1 005 593
+    t= 220s  score=1 005 593
+    t= 225s  score=1 005 593
+    t= 230s  score=1 005 593
+    t= 235s  score=1 005 593
+    t= 240s  score=1 005 593
+    fusion : 70 kicks appliques, 0 refuses (conflit)
+  [4] + ILS (15677358 kicks)  = 1 005 593
+  >>> score = 1 005 593   (borne sup 1 024 306 - 98,2%)
+Saved solution to: output_k33/instance01_K.txt
+----------------------------------------
+Running Official Judge for instance01
+Score = 1005593
+----------------------------------------
+java -Xmx3g -Dils.seconds=240 -Dils.threads=1 -cp out33b GoogleHash2017 instances_k/instance02.txt output_k33/instance02_K.txt
+Google Hash Code 2017 - Streaming Videos
+Running ILSSolver...
+ILS : budget = 240 s, threads = 1
+  V=384 E=192 R=2012 C=48 X=240 | requetes=5067884
+  endpoints : 0 orphelins, 48 mono-cache, 144 multi-cache
+  [1] glouton           = 968 172
+  [3] + sac a dos exact = 975 986
+    t=   5s  score=985 600
+    t=  10s  score=985 600
+    t=  15s  score=985 600
+    t=  20s  score=985 600
+    t=  25s  score=985 600
+    t=  30s  score=985 600
+    t=  35s  score=985 600
+    t=  40s  score=985 600
+    t=  45s  score=985 600
+    t=  50s  score=985 600
+    t=  55s  score=985 600
+    t=  60s  score=985 600
+    t=  65s  score=985 600
+    t=  70s  score=985 600
+    t=  75s  score=985 600
+    t=  80s  score=985 600
+    t=  85s  score=985 600
+    t=  90s  score=985 600
+    t=  95s  score=985 600
+    t= 100s  score=985 600
+    t= 105s  score=985 600
+    t= 110s  score=985 600
+    t= 115s  score=985 600
+    t= 120s  score=985 600
+    t= 125s  score=985 600
+    t= 130s  score=985 600
+    t= 135s  score=985 600
+    t= 140s  score=985 600
+    t= 145s  score=985 600
+    t= 150s  score=985 600
+    t= 155s  score=985 600
+    t= 160s  score=985 600
+    t= 165s  score=985 600
+    t= 170s  score=985 600
+    t= 175s  score=985 600
+    t= 180s  score=985 600
+    t= 185s  score=985 600
+    t= 190s  score=985 600
+    t= 195s  score=985 600
+    t= 200s  score=985 600
+    t= 205s  score=985 600
+    t= 210s  score=985 600
+    t= 215s  score=985 600
+    t= 220s  score=985 600
+    t= 225s  score=985 600
+    t= 230s  score=985 600
+    t= 235s  score=985 600
+    t= 240s  score=985 600
+    fusion : 16 kicks appliques, 0 refuses (conflit)
+  [4] + ILS (3849452 kicks)  = 985 600
+  >>> score = 985 600   (borne sup 1 856 951 - 53,1%)
+Saved solution to: output_k33/instance02_K.txt
+----------------------------------------
+Running Official Judge for instance02
+Score = 985600
+----------------------------------------
+java -Xmx3g -Dils.seconds=240 -Dils.threads=1 -cp out33b GoogleHash2017 instances_k/instance06.txt output_k33/instance06_K.txt
+Google Hash Code 2017 - Streaming Videos
+Running ILSSolver...
+ILS : budget = 240 s, threads = 1
+  V=1471 E=361 R=2424 C=60 X=600 | requetes=5641707
+  endpoints : 0 orphelins, 60 mono-cache, 301 multi-cache
+  [1] glouton           = 1 542 411
+  [3] + sac a dos exact = 1 542 411
+    t=   5s  score=2 355 465
+    t=  10s  score=2 355 465
+    t=  15s  score=2 355 465
+    t=  20s  score=2 355 465
+    t=  25s  score=2 355 465
+    t=  30s  score=2 355 465
+    t=  35s  score=2 355 465
+    t=  40s  score=2 355 465
+    t=  45s  score=2 355 465
+    t=  50s  score=2 355 465
+    t=  55s  score=2 355 465
+    t=  60s  score=2 355 465
+    t=  65s  score=2 355 465
+    t=  70s  score=2 355 465
+    t=  75s  score=2 355 465
+    t=  80s  score=2 355 465
+    t=  85s  score=2 355 465
+    t=  90s  score=2 355 465
+    t=  95s  score=2 355 465
+    t= 100s  score=2 355 465
+    t= 105s  score=2 355 465
+    t= 110s  score=2 355 465
+    t= 115s  score=2 355 465
+    t= 120s  score=2 355 465
+    t= 125s  score=2 355 465
+    t= 130s  score=2 355 465
+    t= 135s  score=2 355 465
+    t= 140s  score=2 355 465
+    t= 145s  score=2 355 465
+    t= 150s  score=2 355 465
+    t= 155s  score=2 355 465
+    t= 160s  score=2 355 465
+    t= 165s  score=2 355 465
+    t= 170s  score=2 355 465
+    t= 175s  score=2 355 465
+    t= 180s  score=2 355 465
+    t= 185s  score=2 355 465
+    t= 190s  score=2 355 465
+    t= 195s  score=2 355 465
+    t= 200s  score=2 355 465
+    t= 205s  score=2 355 465
+    t= 210s  score=2 355 465
+    t= 215s  score=2 355 465
+    t= 220s  score=2 355 465
+    t= 225s  score=2 355 465
+    t= 230s  score=2 355 465
+    t= 235s  score=2 355 465
+    t= 240s  score=2 355 465
+    fusion : 30 kicks appliques, 0 refuses (conflit)
+  [4] + ILS (463466 kicks)  = 2 355 465
+  >>> score = 2 355 465   (borne sup 3 022 262 - 77,9%)
+Saved solution to: output_k33/instance06_K.txt
+----------------------------------------
+Running Official Judge for instance06
+Score = 2355465
+----------------------------------------
+java -Xmx3g -Dils.seconds=240 -Dils.threads=1 -cp out33b GoogleHash2017 instances_k/instance07.txt output_k33/instance07_K.txt
+Google Hash Code 2017 - Streaming Videos
+Running ILSSolver...
+ILS : budget = 240 s, threads = 1
+  V=1760 E=120 R=7316 C=31 X=500 | requetes=3432510
+  endpoints : 0 orphelins, 0 mono-cache, 120 multi-cache
+  [1] glouton           = 1 094 813
+  [3] + sac a dos exact = 1 094 813
+    graines : 1 094 813 
+  [4] + ILS (911764 kicks)  = 1 094 813
+  >>> score = 1 094 813   (borne sup 3 990 000 - 27,4%)
+Saved solution to: output_k33/instance07_K.txt
+----------------------------------------
+Running Official Judge for instance07
+Score = 1094813
+----------------------------------------
+java -Xmx3g -Dils.seconds=240 -Dils.threads=1 -cp out33b GoogleHash2017 instances_k/instance03.txt output_k33/instance03_K.txt
+Google Hash Code 2017 - Streaming Videos
+Running ILSSolver...
+ILS : budget = 240 s, threads = 1
+  V=500 E=50 R=25000 C=50 X=10 | requetes=2555000
+  endpoints : 0 orphelins, 0 mono-cache, 50 multi-cache
+  [1] glouton           = 2 550 000
+  [3] + sac a dos exact = 2 550 000
+    t=   5s  score=2 550 000
+    t=  10s  score=2 550 000
+    t=  15s  score=2 550 000
+    t=  20s  score=2 550 000
+    t=  25s  score=2 550 000
+    t=  30s  score=2 550 000
+    t=  35s  score=2 550 000
+    t=  40s  score=2 550 000
+    t=  45s  score=2 550 000
+    t=  50s  score=2 550 000
+    t=  55s  score=2 550 000
+    t=  60s  score=2 550 000
+    t=  65s  score=2 550 000
+    t=  70s  score=2 550 000
+    t=  75s  score=2 550 000
+    t=  80s  score=2 550 000
+    t=  85s  score=2 550 000
+    t=  90s  score=2 550 000
+    t=  95s  score=2 550 000
+    t= 100s  score=2 550 000
+    t= 105s  score=2 550 000
+    t= 110s  score=2 550 000
+    t= 115s  score=2 550 000
+    t= 120s  score=2 550 000
+    t= 125s  score=2 550 000
+    t= 130s  score=2 550 000
+    t= 135s  score=2 550 000
+    t= 140s  score=2 550 000
+    t= 145s  score=2 550 000
+    t= 150s  score=2 550 000
+    t= 155s  score=2 550 000
+    t= 160s  score=2 550 000
+    t= 165s  score=2 550 000
+    t= 170s  score=2 550 000
+    t= 175s  score=2 550 000
+    t= 180s  score=2 550 000
+    t= 185s  score=2 550 000
+    t= 190s  score=2 550 000
+    t= 195s  score=2 550 000
+    t= 200s  score=2 550 000
+    t= 205s  score=2 550 000
+    t= 210s  score=2 550 000
+    t= 215s  score=2 550 000
+    t= 220s  score=2 550 000
+    t= 225s  score=2 550 000
+    t= 230s  score=2 550 000
+    t= 235s  score=2 550 000
+    t= 240s  score=2 550 000
+    fusion : 0 kicks appliques, 0 refuses (conflit)
+  [4] + ILS (66634 kicks)  = 2 550 000
+  >>> score = 2 550 000   (borne sup 5 000 000 - 51,0%)
+Saved solution to: output_k33/instance03_K.txt
+----------------------------------------
+Running Official Judge for instance03
+Score = 2550000
+----------------------------------------
+java -Xmx3g -Dils.seconds=240 -Dils.threads=1 -cp out33b GoogleHash2017 instances_k/instance09.txt output_k33/instance09_K.txt
+Google Hash Code 2017 - Streaming Videos
+Running ILSSolver...
+ILS : budget = 240 s, threads = 1
+  V=3000 E=1000 R=3600 C=1000 X=1998 | requetes=3483800
+  endpoints : 0 orphelins, 400 mono-cache, 600 multi-cache
+  [1] glouton           = 563 835
+  [3] + sac a dos exact = 1 022 070
+    t=   5s  score=1 100 741
+    t=  10s  score=1 100 741
+    t=  15s  score=1 100 741
+    t=  20s  score=1 100 741
+    t=  25s  score=1 100 741
+    t=  30s  score=1 100 741
+    t=  35s  score=1 100 741
+    t=  40s  score=1 100 741
+    t=  45s  score=1 100 741
+    t=  50s  score=1 100 741
+    t=  55s  score=1 100 741
+    t=  60s  score=1 100 741
+    t=  65s  score=1 100 741
+    t=  70s  score=1 100 741
+    t=  75s  score=1 100 741
+    t=  80s  score=1 100 741
+    t=  85s  score=1 100 741
+    t=  90s  score=1 100 741
+    t=  95s  score=1 100 741
+    t= 100s  score=1 100 741
+    t= 105s  score=1 100 741
+    t= 110s  score=1 100 741
+    t= 115s  score=1 100 741
+    t= 120s  score=1 100 741
+    t= 125s  score=1 100 741
+    t= 130s  score=1 100 741
+    t= 135s  score=1 100 741
+    t= 140s  score=1 100 741
+    t= 145s  score=1 100 741
+    t= 150s  score=1 100 741
+    t= 155s  score=1 100 741
+    t= 160s  score=1 100 741
+    t= 165s  score=1 100 741
+    t= 170s  score=1 100 741
+    t= 175s  score=1 100 741
+    t= 180s  score=1 100 741
+    t= 185s  score=1 100 741
+    t= 190s  score=1 100 741
+    t= 195s  score=1 100 741
+    t= 200s  score=1 100 741
+    t= 205s  score=1 100 741
+    t= 210s  score=1 100 741
+    t= 215s  score=1 100 741
+    t= 220s  score=1 100 741
+    t= 225s  score=1 100 741
+    t= 230s  score=1 100 741
+    t= 235s  score=1 100 741
+    t= 240s  score=1 100 741
+    fusion : 300 kicks appliques, 0 refuses (conflit)
+  [4] + ILS (2478944 kicks)  = 1 100 741
+  >>> score = 1 100 741   (borne sup 2 946 568 - 37,4%)
+Saved solution to: output_k33/instance09_K.txt
+----------------------------------------
+Running Official Judge for instance09
+Score = 1100741
+----------------------------------------
+java -Xmx3g -Dils.seconds=240 -Dils.threads=1 -cp out33b GoogleHash2017 instances_k/instance15.txt output_k33/instance15_K.txt
+Google Hash Code 2017 - Streaming Videos
+Running ILSSolver...
+ILS : budget = 240 s, threads = 1
+  V=10000 E=1000 R=714629 C=100 X=1000 | requetes=20433070
+  endpoints : 0 orphelins, 425 mono-cache, 575 multi-cache
+  [1] glouton           = 222 004
+  [3] + sac a dos exact = 292 212
+    t=   5s  score=292 212
+    t=  10s  score=292 212
+    t=  15s  score=292 212
+    t=  20s  score=292 212
+    t=  25s  score=292 212
+    t=  30s  score=292 212
+    t=  35s  score=292 212
+    t=  40s  score=292 212
+    t=  45s  score=292 212
+    t=  50s  score=292 212
+    t=  55s  score=292 212
+    t=  60s  score=292 212
+    t=  65s  score=292 212
+    t=  70s  score=292 212
+    t=  75s  score=292 212
+    t=  80s  score=292 212
+    t=  85s  score=292 212
+    t=  90s  score=292 212
+    t=  95s  score=292 212
+    t= 100s  score=292 212
+    t= 105s  score=292 212
+    t= 110s  score=292 212
+    t= 115s  score=292 212
+    t= 120s  score=292 212
+    t= 125s  score=292 212
+    t= 130s  score=292 212
+    t= 135s  score=292 212
+    t= 140s  score=292 212
+    t= 145s  score=292 212
+    t= 150s  score=292 212
+    t= 155s  score=292 212
+    t= 160s  score=292 212
+    t= 165s  score=292 212
+    t= 170s  score=292 212
+    t= 175s  score=292 212
+    t= 180s  score=292 212
+    t= 185s  score=292 212
+    t= 190s  score=292 212
+    t= 195s  score=292 212
+    t= 200s  score=292 212
+    t= 205s  score=292 212
+    t= 210s  score=292 212
+    t= 215s  score=292 212
+    t= 220s  score=292 212
+    t= 225s  score=292 212
+    t= 230s  score=292 212
+    t= 235s  score=292 212
+    t= 237s  score=292 212
+    fusion : 0 kicks appliques, 0 refuses (conflit)
+  [4] + ILS (10397 kicks)  = 292 212
+  >>> score = 292 212   (borne sup 394 622 - 74,0%)
+Saved solution to: output_k33/instance15_K.txt
+----------------------------------------
+Running Official Judge for instance15
+Score = 292212
+----------------------------------------
+java -Xmx3g -Dils.seconds=240 -Dils.threads=1 -cp out33b GoogleHash2017 instances_k/instance13.txt output_k33/instance13_K.txt
+Google Hash Code 2017 - Streaming Videos
+Running ILSSolver...
+ILS : budget = 240 s, threads = 1
+  V=10000 E=100 R=1000000 C=100 X=100 | requetes=101000000
+  endpoints : 0 orphelins, 0 mono-cache, 100 multi-cache
+  [1] glouton           = 5 066 500
+  [3] + sac a dos exact = 5 066 500
+    t=   5s  score=5 066 500
+    t=  10s  score=5 066 500
+    t=  15s  score=5 066 500
+    t=  20s  score=5 066 500
+    t=  25s  score=5 066 500
+    t=  30s  score=5 066 500
+    t=  35s  score=5 066 500
+    t=  40s  score=5 066 500
+    t=  45s  score=5 066 500
+    t=  50s  score=5 066 500
+    t=  55s  score=5 066 500
+    t=  60s  score=5 066 500
+    t=  65s  score=5 066 500
+    t=  70s  score=5 066 500
+    t=  75s  score=5 066 500
+    t=  80s  score=5 066 500
+    t=  85s  score=5 066 500
+    t=  90s  score=5 066 500
+    t=  95s  score=5 066 500
+    t= 100s  score=5 066 500
+    t= 105s  score=5 066 500
+    t= 110s  score=5 066 500
+    t= 115s  score=5 066 500
+    t= 120s  score=5 066 500
+    t= 125s  score=5 066 500
+    t= 130s  score=5 066 500
+    t= 135s  score=5 066 500
+    t= 140s  score=5 066 500
+    t= 145s  score=5 066 500
+    t= 150s  score=5 066 500
+    t= 155s  score=5 066 500
+    t= 160s  score=5 066 500
+    t= 165s  score=5 066 500
+    t= 170s  score=5 066 500
+    t= 175s  score=5 066 500
+    t= 180s  score=5 066 500
+    t= 185s  score=5 066 500
+    t= 190s  score=5 066 500
+    t= 195s  score=5 066 500
+    t= 200s  score=5 066 500
+    t= 205s  score=5 066 500
+    t= 210s  score=5 066 500
+    t= 215s  score=5 066 500
+    t= 220s  score=5 066 500
+    t= 225s  score=5 066 500
+    t= 230s  score=5 066 500
+    t= 230s  score=5 066 500
+    fusion : 0 kicks appliques, 0 refuses (conflit)
+  [4] + ILS (1357 kicks)  = 5 066 500
+  >>> score = 5 066 500   (borne sup 10 000 000 - 50,7%)
+Saved solution to: output_k33/instance13_K.txt
+----------------------------------------
+Running Official Judge for instance13
+Score = 5066500
+----------------------------------------

@@ -1,0 +1,2 @@
+resolution de instance08 (budget 2400s, heap 1500m)
+Picked up JAVA_TOOL_OPTIONS: -Dils.threads=1

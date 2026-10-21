@@ -1,0 +1,87 @@
+make: Dépendance circulaire judge <- judge abandonnée.
+g++ -O3 judgeHashCode2017.cpp -o judge
+judgeHashCode2017.cpp: In function ‘int main(int, char**)’:
+judgeHashCode2017.cpp:60:9: warning: ignoring return value of ‘int fscanf(FILE*, const char*, ...)’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+   60 |   fscanf(input, "%d %d %d %d %d", &nbVideos, &nbEndpoints, &nbRequest, &nbCaches, &capacity);
+      |   ~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+judgeHashCode2017.cpp:64:11: warning: ignoring return value of ‘int fscanf(FILE*, const char*, ...)’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+   64 |     fscanf(input, "%d", size+i);
+      |     ~~~~~~^~~~~~~~~~~~~~~~~~~~~
+judgeHashCode2017.cpp:70:11: warning: ignoring return value of ‘int fscanf(FILE*, const char*, ...)’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+   70 |     fscanf(input, "%d %d", &l, &c);
+      |     ~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+judgeHashCode2017.cpp:75:13: warning: ignoring return value of ‘int fscanf(FILE*, const char*, ...)’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+   75 |       fscanf(input, "%d %d", &c, &l);
+      |       ~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+judgeHashCode2017.cpp:83:11: warning: ignoring return value of ‘int fscanf(FILE*, const char*, ...)’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+   83 |     fscanf(input, "%d %d %d", &v, &e, &n);
+      |     ~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+judgeHashCode2017.cpp:94:9: warning: ignoring return value of ‘int fscanf(FILE*, const char*, ...)’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+   94 |   fscanf(output, "%d", &nbUsedCache);
+      |   ~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+judgeHashCode2017.cpp:105:11: warning: ignoring return value of ‘int fscanf(FILE*, const char*, ...)’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+  105 |     fscanf(output, "%c", &r);
+      |     ~~~~~~^~~~~~~~~~~~~~~~~~
+judgeHashCode2017.cpp:107:13: warning: ignoring return value of ‘int fscanf(FILE*, const char*, ...)’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+  107 |       fscanf(output, "%d", &v);
+      |       ~~~~~~^~~~~~~~~~~~~~~~~~
+judgeHashCode2017.cpp:112:13: warning: ignoring return value of ‘int fscanf(FILE*, const char*, ...)’ declared with attribute ‘warn_unused_result’ [-Wunused-result]
+  112 |       fscanf(output, "%c", &r);
+      |       ~~~~~~^~~~~~~~~~~~~~~~~~
+javac -d out40 src/GoogleHash2017.java src/model/*.java src/io/*.java src/solver/*.java src/solver/impl/*.java src/solver/ils/*.java
+java -Xmx4g -Dils.seconds=60 -Dils.noise=0.40 -Dils.threads=10 -cp out40 GoogleHash2017 instances_k/instance05.txt output_k40/instance05_K.txt
+Google Hash Code 2017 - Streaming Videos
+Running ILSSolver...
+ILS : budget = 60 s, threads = 10
+  V=1000 E=100 R=90000 C=100 X=10 | requetes=9000000
+  endpoints : 0 orphelins, 0 mono-cache, 100 multi-cache
+  [1] glouton           = 5 234 013
+  [3] + sac a dos exact = 5 234 013
+    t=   5s  score=5 273 035
+    t=  11s  score=5 285 555
+    t=  16s  score=5 291 596
+    t=  21s  score=5 295 281
+    t=  26s  score=5 298 367
+    t=  31s  score=5 299 955
+    t=  36s  score=5 301 713
+    t=  41s  score=5 302 804
+    t=  46s  score=5 303 871
+    t=  51s  score=5 304 295
+    t=  56s  score=5 305 112
+    t=  60s  score=5 305 396
+    fusion : 342 kicks appliques, 1546 refuses (conflit)
+  [4] + ILS (73115 kicks)  = 5 305 405
+  >>> score = 5 305 405   (borne sup 10 000 000 - 53,1%)
+Saved solution to: output_k40/instance05_K.txt
+----------------------------------------
+Running Official Judge for instance05
+Score = 5305405
+----------------------------------------
+java -Xmx4g -Dils.seconds=60 -Dils.noise=0.40 -Dils.threads=10 -cp out40 GoogleHash2017 instances_k/instance10.txt output_k40/instance10_K.txt
+Google Hash Code 2017 - Streaming Videos
+Running ILSSolver...
+ILS : budget = 60 s, threads = 10
+  V=5000 E=500 R=200289 C=200 X=385 | requetes=321545438
+  endpoints : 0 orphelins, 0 mono-cache, 500 multi-cache
+  [1] glouton           = 580 600
+  [3] + sac a dos exact = 581 094
+    t=   5s  score=581 420
+    t=  10s  score=581 598
+    t=  15s  score=581 758
+    t=  20s  score=581 858
+    t=  25s  score=581 925
+    t=  30s  score=581 985
+    t=  35s  score=582 029
+    t=  40s  score=582 061
+    t=  45s  score=582 086
+    t=  50s  score=582 116
+    t=  55s  score=582 147
+    t=  59s  score=582 166
+    fusion : 696 kicks appliques, 1125 refuses (conflit)
+  [4] + ILS (121439 kicks)  = 582 166
+  >>> score = 582 166   (borne sup 1 046 876 - 55,6%)
+Saved solution to: output_k40/instance10_K.txt
+----------------------------------------
+Running Official Judge for instance10
+Score = 582166
+----------------------------------------
