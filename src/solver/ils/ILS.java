@@ -115,7 +115,7 @@ public final class ILS {
 
     public static double TEMP  = Double.parseDouble(System.getProperty("ils.temp", "0"));
 
-    public static double NOISE = Double.parseDouble(System.getProperty("ils.noise", "0.2"));
+    public static double NOISE = Double.parseDouble(System.getProperty("ils.noise", "0.33"));
     public static int REPAIR   = Integer.getInteger("ils.repair", 2);
 
     public static Result run(Instance in, Solution start, long budgetMs, long seed,
