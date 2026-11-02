@@ -12,7 +12,7 @@ import java.util.List;
 
 public class OutputWriter {
 
-    public static void extracteIntoFile(Problem problem, String outputFilePath) {
+    public static void writeSolutionToFile(Problem problem, String outputFilePath) {
         // 4. Output results to file
         OutputWriter writer = new OutputWriter();
         try {

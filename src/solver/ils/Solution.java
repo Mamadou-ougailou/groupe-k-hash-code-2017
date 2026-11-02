@@ -7,85 +7,84 @@ import java.nio.file.Path;
 
 public final class Solution {
 
-    public final Instance in;
-    private final long[] bits;
-    public final int[] used;
+    public final FlatProblem problem;
+    private final long[] cacheVideoBits;
+    public final int[] usedCapacity;
 
-    public Solution(Instance in) {
-        this.in = in;
-        this.bits = new long[(int) (((long) in.C * in.V + 63) >>> 6)];
-        this.used = new int[in.C];
+    public Solution(FlatProblem problem) {
+        this.problem = problem;
+        this.cacheVideoBits = new long[(int) (((long) problem.cacheCount * problem.videoCount + 63) >>> 6)];
+        this.usedCapacity = new int[problem.cacheCount];
     }
 
-    public boolean has(int c, int v) {
-        int i = c * in.V + v;
-        return (bits[i >>> 6] & (1L << i)) != 0;
+    public boolean contains(int cache, int video) {
+        int bitIndex = cache * problem.videoCount + video;
+        return (cacheVideoBits[bitIndex >>> 6] & (1L << bitIndex)) != 0;
     }
 
-    public boolean add(int c, int v) {
-        if (has(c, v)) return false;
-        int s = in.videoSize[v];
-        if (used[c] + s > in.X) return false;
-        int i = c * in.V + v;
-        bits[i >>> 6] |= (1L << i);
-        used[c] += s;
+    public boolean add(int cache, int video) {
+        if (contains(cache, video)) return false;
+        int size = problem.videoSize[video];
+        if (usedCapacity[cache] + size > problem.cacheCapacity) return false;
+        int bitIndex = cache * problem.videoCount + video;
+        cacheVideoBits[bitIndex >>> 6] |= (1L << bitIndex);
+        usedCapacity[cache] += size;
         return true;
     }
 
-    public boolean remove(int c, int v) {
-        if (!has(c, v)) return false;
-        int i = c * in.V + v;
-        bits[i >>> 6] &= ~(1L << i);
-        used[c] -= in.videoSize[v];
+    public boolean remove(int cache, int video) {
+        if (!contains(cache, video)) return false;
+        int bitIndex = cache * problem.videoCount + video;
+        cacheVideoBits[bitIndex >>> 6] &= ~(1L << bitIndex);
+        usedCapacity[cache] -= problem.videoSize[video];
         return true;
     }
 
-    public void clearCache(int c) {
-        if (used[c] == 0) return;
-        for (int v = 0; v < in.V; v++) {
-            if (has(c, v)) { int i = c * in.V + v; bits[i >>> 6] &= ~(1L << i); }
+    public void clearCache(int cache) {
+        if (usedCapacity[cache] == 0) return;
+        for (int video = 0; video < problem.videoCount; video++) {
+            if (contains(cache, video)) { int bitIndex = cache * problem.videoCount + video; cacheVideoBits[bitIndex >>> 6] &= ~(1L << bitIndex); }
         }
-        used[c] = 0;
+        usedCapacity[cache] = 0;
     }
 
-    public int remaining(int c) { return in.X - used[c]; }
+    public int remainingCapacity(int cache) { return problem.cacheCapacity - usedCapacity[cache]; }
 
     public Solution copy() {
-        Solution s = new Solution(in);
-        s.copyFrom(this);
-        return s;
+        Solution duplicate = new Solution(problem);
+        duplicate.copyFrom(this);
+        return duplicate;
     }
 
     public void copyFrom(Solution other) {
-        System.arraycopy(other.bits, 0, bits, 0, bits.length);
-        System.arraycopy(other.used, 0, used, 0, used.length);
+        System.arraycopy(other.cacheVideoBits, 0, cacheVideoBits, 0, cacheVideoBits.length);
+        System.arraycopy(other.usedCapacity, 0, usedCapacity, 0, usedCapacity.length);
     }
 
     public void validateOrThrow() {
-        for (int c = 0; c < in.C; c++) {
-            int sum = 0;
-            for (int v = 0; v < in.V; v++) if (has(c, v)) sum += in.videoSize[v];
-            if (sum != used[c])
-                throw new IllegalStateException("cache " + c + " : compteur desynchronise ("
-                        + used[c] + " vs " + sum + ")");
-            if (sum > in.X)
-                throw new IllegalStateException("cache " + c + " : capacite depassee ("
-                        + sum + " > " + in.X + ")");
+        for (int cache = 0; cache < problem.cacheCount; cache++) {
+            int sizeSum = 0;
+            for (int video = 0; video < problem.videoCount; video++) if (contains(cache, video)) sizeSum += problem.videoSize[video];
+            if (sizeSum != usedCapacity[cache])
+                throw new IllegalStateException("cache " + cache + " : compteur desynchronise ("
+                        + usedCapacity[cache] + " vs " + sizeSum + ")");
+            if (sizeSum > problem.cacheCapacity)
+                throw new IllegalStateException("cache " + cache + " : capacite depassee ("
+                        + sizeSum + " > " + problem.cacheCapacity + ")");
         }
     }
 
     public void write(Path out) throws IOException {
-        StringBuilder sb = new StringBuilder(1 << 20);
-        int nonEmpty = 0;
-        for (int c = 0; c < in.C; c++) if (used[c] > 0) nonEmpty++;
-        sb.append(nonEmpty).append('\n');
-        for (int c = 0; c < in.C; c++) {
-            if (used[c] == 0) continue;
-            sb.append(c);
-            for (int v = 0; v < in.V; v++) if (has(c, v)) sb.append(' ').append(v);
-            sb.append('\n');
+        StringBuilder builder = new StringBuilder(1 << 20);
+        int nonEmptyCacheCount = 0;
+        for (int cache = 0; cache < problem.cacheCount; cache++) if (usedCapacity[cache] > 0) nonEmptyCacheCount++;
+        builder.append(nonEmptyCacheCount).append('\n');
+        for (int cache = 0; cache < problem.cacheCount; cache++) {
+            if (usedCapacity[cache] == 0) continue;
+            builder.append(cache);
+            for (int video = 0; video < problem.videoCount; video++) if (contains(cache, video)) builder.append(' ').append(video);
+            builder.append('\n');
         }
-        try (BufferedWriter w = Files.newBufferedWriter(out)) { w.write(sb.toString()); }
+        try (BufferedWriter writer = Files.newBufferedWriter(out)) { writer.write(builder.toString()); }
     }
 }
-

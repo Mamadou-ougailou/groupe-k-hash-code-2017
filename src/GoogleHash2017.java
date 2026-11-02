@@ -26,10 +26,10 @@ public class GoogleHash2017 {
         }
 
         // 2. Run Solver (Developers can plug in their own solvers here)
-        Solver solver = new solver.impl.ILSSolver();
-        System.out.println("Running ILSSolver...");
+        Solver solver = new solver.impl.GreedyKnapsackIlsSolver();
+        System.out.println("Running GreedyKnapsackIlsSolver...");
         solver.solve(problem);
 
-        OutputWriter.extracteIntoFile(problem, outputFilePath);
+        OutputWriter.writeSolutionToFile(problem, outputFilePath);
     }
 }

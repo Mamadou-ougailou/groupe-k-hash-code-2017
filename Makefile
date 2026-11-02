@@ -31,7 +31,7 @@ INSTANCES_K  = $(sort $(wildcard instances_k/*.txt))
 ILS_SECONDS ?= 60
 JAVA_OPTS   ?= -Xmx4g -Dils.seconds=$(ILS_SECONDS)
 
-.PHONY: all compile judge all-instances judge-all generate dashboard pipeline run clean FORCE
+.PHONY: all compile test judge all-instances judge-all generate dashboard pipeline run clean FORCE
 
 all: compile judge
 
@@ -39,6 +39,11 @@ all: compile judge
 compile:
 	@$(call MKDIR,$(OUT_DIR))
 	$(JAVAC) -d $(OUT_DIR) src/GoogleHash2017.java src/model/*.java src/io/*.java src/solver/*.java src/solver/impl/*.java src/solver/ils/*.java
+
+# Compile and run the unit tests (src/test, one folder per tested module, grouped in HashCode2017Test)
+test: compile
+	$(JAVAC) -cp $(OUT_DIR) -d $(OUT_DIR) src/test/*.java src/test/model/*.java src/test/io/*.java src/test/solver/ils/*.java src/test/solver/impl/*.java
+	$(JAVA) -ea -cp $(OUT_DIR) test.HashCode2017Test
 
 # Compile C++ judge
 judge: $(TARGET_JUDGE)

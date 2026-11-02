@@ -13,24 +13,24 @@ import java.util.List;
 public class Parser {
 
     public Problem parse(String filePath) {
-        FastScanner sc = null;
+        FastScanner scanner = null;
         try {
-            sc = new FastScanner(filePath);
+            scanner = new FastScanner(filePath);
         } catch (FileNotFoundException e) {
             System.err.println("File not found: " + filePath);
             return null;
         }
 
-        int numberOfVideos = sc.nextInt();
-        int numberOfEndpoints = sc.nextInt();
-        int numberOfRequests = sc.nextInt();
-        int numberOfCaches = sc.nextInt();
-        int cacheCapacity = sc.nextInt();
+        int numberOfVideos = scanner.nextInt();
+        int numberOfEndpoints = scanner.nextInt();
+        int numberOfRequests = scanner.nextInt();
+        int numberOfCaches = scanner.nextInt();
+        int cacheCapacity = scanner.nextInt();
 
         // 1. Parse Videos
         List<Video> videos = new ArrayList<>();
         for (int i = 0; i < numberOfVideos; i++) {
-            videos.add(new Video(i, sc.nextInt()));
+            videos.add(new Video(i, scanner.nextInt()));
         }
 
         // 2. Initialize Caches (we need them for Endpoints)
@@ -41,14 +41,14 @@ public class Parser {
 
         // 3. Parse Endpoints
         List<Endpoint> endpoints = new ArrayList<>();
-        for (int e = 0; e < numberOfEndpoints; e++) {
-            int dataCenterLatency = sc.nextInt();
-            Endpoint endpoint = new Endpoint(e, dataCenterLatency);
+        for (int endpointIndex = 0; endpointIndex < numberOfEndpoints; endpointIndex++) {
+            int dataCenterLatency = scanner.nextInt();
+            Endpoint endpoint = new Endpoint(endpointIndex, dataCenterLatency);
 
-            int numConnectedCaches = sc.nextInt();
-            for (int j = 0; j < numConnectedCaches; j++) {
-                int cacheId = sc.nextInt();
-                int latency = sc.nextInt();
+            int connectedCacheCount = scanner.nextInt();
+            for (int j = 0; j < connectedCacheCount; j++) {
+                int cacheId = scanner.nextInt();
+                int latency = scanner.nextInt();
                 Cache cache = caches.get(cacheId);
                 endpoint.addCacheConnection(cache, latency);
                 // Reverse mapping: let the cache know about this endpoint
@@ -60,18 +60,18 @@ public class Parser {
         // 4. Parse Requests
         List<RequestDescription> requests = new ArrayList<>();
         for (int i = 0; i < numberOfRequests; i++) {
-            int videoId = sc.nextInt();
-            int endpointId = sc.nextInt();
-            int numRequests = sc.nextInt();
+            int videoId = scanner.nextInt();
+            int endpointId = scanner.nextInt();
+            int viewCount = scanner.nextInt();
 
             Video video = videos.get(videoId);
             Endpoint endpoint = endpoints.get(endpointId);
-            requests.add(new RequestDescription(video, endpoint, numRequests));
+            requests.add(new RequestDescription(video, endpoint, viewCount));
             // Populate endpoint's requested videos map
-            endpoint.addVideoRequest(video, numRequests);
+            endpoint.addVideoRequest(video, viewCount);
         }
 
-        sc.close();
+        scanner.close();
 
         return new Problem(videos, endpoints, caches, requests, cacheCapacity);
     }
