@@ -4,183 +4,183 @@ import java.util.Random;
 
 public final class BinPacking {
 
-    public static boolean isDegenerate(Instance in) {
-        if (in.E == 0 || in.C == 0) return false;
-        int ld = in.dcLatency[0];
-        if (in.epStart[1] - in.epStart[0] != in.C) return false;
-        int lc = in.epLat[0];
-        for (int e = 0; e < in.E; e++) {
-            if (in.dcLatency[e] != ld) return false;
-            if (in.epStart[e + 1] - in.epStart[e] != in.C) return false;
-            for (int i = in.epStart[e]; i < in.epStart[e + 1]; i++)
-                if (in.epLat[i] != lc) return false;
+    public static boolean isDegenerate(FlatProblem problem) {
+        if (problem.endpointCount == 0 || problem.cacheCount == 0) return false;
+        int commonDataCenterLatency = problem.dataCenterLatency[0];
+        if (problem.endpointLinkStart[1] - problem.endpointLinkStart[0] != problem.cacheCount) return false;
+        int commonCacheLatency = problem.linkLatency[0];
+        for (int endpoint = 0; endpoint < problem.endpointCount; endpoint++) {
+            if (problem.dataCenterLatency[endpoint] != commonDataCenterLatency) return false;
+            if (problem.endpointLinkStart[endpoint + 1] - problem.endpointLinkStart[endpoint] != problem.cacheCount) return false;
+            for (int link = problem.endpointLinkStart[endpoint]; link < problem.endpointLinkStart[endpoint + 1]; link++)
+                if (problem.linkLatency[link] != commonCacheLatency) return false;
         }
         return true;
     }
 
-    private final Instance in;
-    private final int V, C, X;
-    private final long[] weight;
-    private final int[] binOf, posIn, rem, binCount;
-    private int[][] binItems;
-    private final int[] unplaced;
-    private int nUnplaced;
-    private long unplacedWeight;
+    private final FlatProblem problem;
+    private final int videoCount, cacheCount, cacheCapacity;
+    private final long[] videoRequestWeight;
+    private final int[] cacheOfVideo, positionInCache, remainingCapacity, videoCountInCache;
+    private int[][] videosInCache;
+    private final int[] unplacedVideos;
+    private int unplacedCount;
+    private long unplacedRequestWeight;
 
-    private BinPacking(Instance in) {
-        this.in = in; V = in.V; C = in.C; X = in.X;
-        weight = new long[V];
-        for (int r = 0; r < in.R; r++) weight[in.reqVideo[r]] += in.reqCount[r];
-        binOf = new int[V]; posIn = new int[V];
-        rem = new int[C]; binCount = new int[C];
-        binItems = new int[C][16];
-        unplaced = new int[V];
-        java.util.Arrays.fill(binOf, -1);
-        java.util.Arrays.fill(rem, X);
+    private BinPacking(FlatProblem problem) {
+        this.problem = problem; videoCount = problem.videoCount; cacheCount = problem.cacheCount; cacheCapacity = problem.cacheCapacity;
+        videoRequestWeight = new long[videoCount];
+        for (int request = 0; request < problem.requestCount; request++) videoRequestWeight[problem.requestVideo[request]] += problem.requestViewCount[request];
+        cacheOfVideo = new int[videoCount]; positionInCache = new int[videoCount];
+        remainingCapacity = new int[cacheCount]; videoCountInCache = new int[cacheCount];
+        videosInCache = new int[cacheCount][16];
+        unplacedVideos = new int[videoCount];
+        java.util.Arrays.fill(cacheOfVideo, -1);
+        java.util.Arrays.fill(remainingCapacity, cacheCapacity);
     }
 
-    private void addTo(int b, int v) {
-        if (binCount[b] == binItems[b].length) {
-            int[] a = new int[binItems[b].length * 2];
-            System.arraycopy(binItems[b], 0, a, 0, binCount[b]);
-            binItems[b] = a;
+    private void addToCache(int cache, int video) {
+        if (videoCountInCache[cache] == videosInCache[cache].length) {
+            int[] grown = new int[videosInCache[cache].length * 2];
+            System.arraycopy(videosInCache[cache], 0, grown, 0, videoCountInCache[cache]);
+            videosInCache[cache] = grown;
         }
-        binItems[b][binCount[b]] = v;
-        posIn[v] = binCount[b]++;
-        binOf[v] = b;
-        rem[b] -= in.videoSize[v];
+        videosInCache[cache][videoCountInCache[cache]] = video;
+        positionInCache[video] = videoCountInCache[cache]++;
+        cacheOfVideo[video] = cache;
+        remainingCapacity[cache] -= problem.videoSize[video];
     }
 
-    private void removeFrom(int v) {
-        int b = binOf[v], p = posIn[v], last = --binCount[b];
-        int mv = binItems[b][last];
-        binItems[b][p] = mv; posIn[mv] = p;
-        binOf[v] = -1;
-        rem[b] += in.videoSize[v];
+    private void removeFromCache(int video) {
+        int cache = cacheOfVideo[video], position = positionInCache[video], lastPosition = --videoCountInCache[cache];
+        int movedVideo = videosInCache[cache][lastPosition];
+        videosInCache[cache][position] = movedVideo; positionInCache[movedVideo] = position;
+        cacheOfVideo[video] = -1;
+        remainingCapacity[cache] += problem.videoSize[video];
     }
 
-    private int bestFit(int v) {
-        int s = in.videoSize[v], best = -1, bestRem = Integer.MAX_VALUE;
-        for (int b = 0; b < C; b++)
-            if (rem[b] >= s && rem[b] - s < bestRem) { bestRem = rem[b] - s; best = b; }
-        return best;
+    private int bestFitCache(int video) {
+        int size = problem.videoSize[video], bestCache = -1, bestLeftover = Integer.MAX_VALUE;
+        for (int cache = 0; cache < cacheCount; cache++)
+            if (remainingCapacity[cache] >= size && remainingCapacity[cache] - size < bestLeftover) { bestLeftover = remainingCapacity[cache] - size; bestCache = cache; }
+        return bestCache;
     }
 
-    public static Solution solve(Instance in, long budgetMs, boolean verbose) {
-        long deadline = System.nanoTime() + budgetMs * 1_000_000L;
+    public static Solution solve(FlatProblem problem, long budgetMs, boolean verbose) {
+        long deadlineNanos = System.nanoTime() + budgetMs * 1_000_000L;
 
-        for (int attempt = 0; attempt < 40 && System.nanoTime() < deadline; attempt++) {
-            BinPacking bp = new BinPacking(in);
-            if (bp.exactPack(new Random(attempt * 7919L + 1))) {
+        for (int attempt = 0; attempt < 40 && System.nanoTime() < deadlineNanos; attempt++) {
+            BinPacking packing = new BinPacking(problem);
+            if (packing.tryExactPacking(new Random(attempt * 7919L + 1))) {
                 if (verbose) System.out.printf("  remplissage EXACT reussi (essai %d) : 0 video non placee%n",
                         attempt + 1);
-                return bp.toSolution(in);
+                return packing.toSolution(problem);
             }
         }
 
         if (verbose) System.out.println("  remplissage exact non trouve -> BFD + reparations");
-        BinPacking bp = new BinPacking(in);
-        bp.pack(Math.max(1, (deadline - System.nanoTime()) / 1_000_000L), verbose);
-        return bp.toSolution(in);
+        BinPacking packing = new BinPacking(problem);
+        packing.packWithRepairs(Math.max(1, (deadlineNanos - System.nanoTime()) / 1_000_000L), verbose);
+        return packing.toSolution(problem);
     }
 
-    private Solution toSolution(Instance in) {
-        Solution sol = new Solution(in);
-        for (int v = 0; v < in.V; v++) if (binOf[v] >= 0) sol.add(binOf[v], v);
-        return sol;
+    private Solution toSolution(FlatProblem problem) {
+        Solution solution = new Solution(problem);
+        for (int video = 0; video < problem.videoCount; video++) if (cacheOfVideo[video] >= 0) solution.add(cacheOfVideo[video], video);
+        return solution;
     }
 
-    private boolean exactPack(Random rng) {
-        int[] pool = new int[V];
-        for (int i = 0; i < V; i++) pool[i] = i;
-        for (int i = V - 1; i > 0; i--) {
+    private boolean tryExactPacking(Random rng) {
+        int[] pool = new int[videoCount];
+        for (int i = 0; i < videoCount; i++) pool[i] = i;
+        for (int i = videoCount - 1; i > 0; i--) {
             int j = rng.nextInt(i + 1);
-            int t = pool[i]; pool[i] = pool[j]; pool[j] = t;
+            int swapped = pool[i]; pool[i] = pool[j]; pool[j] = swapped;
         }
-        int nPool = V;
+        int poolCount = videoCount;
 
         final int SAMPLE = 420;
-        boolean[] reach = new boolean[X + 1];
-        int[] byItem = new int[X + 1];
+        boolean[] reachable = new boolean[cacheCapacity + 1];
+        int[] lastItemForSum = new int[cacheCapacity + 1];
         int[] sample = new int[SAMPLE];
 
-        for (int b = 0; b < C; b++) {
-            int ns = Math.min(SAMPLE, nPool);
-            for (int i = 0; i < ns; i++) sample[i] = pool[nPool - ns + i];
+        for (int cache = 0; cache < cacheCount; cache++) {
+            int sampleCount = Math.min(SAMPLE, poolCount);
+            for (int i = 0; i < sampleCount; i++) sample[i] = pool[poolCount - sampleCount + i];
 
-            java.util.Arrays.fill(reach, false);
-            java.util.Arrays.fill(byItem, -1);
-            reach[0] = true;
-            for (int i = 0; i < ns; i++) {
-                int s = in.videoSize[sample[i]];
-                for (int w = X; w >= s; w--)
-                    if (!reach[w] && reach[w - s]) { reach[w] = true; byItem[w] = i; }
-                if (reach[X]) break;
+            java.util.Arrays.fill(reachable, false);
+            java.util.Arrays.fill(lastItemForSum, -1);
+            reachable[0] = true;
+            for (int i = 0; i < sampleCount; i++) {
+                int size = problem.videoSize[sample[i]];
+                for (int sum = cacheCapacity; sum >= size; sum--)
+                    if (!reachable[sum] && reachable[sum - size]) { reachable[sum] = true; lastItemForSum[sum] = i; }
+                if (reachable[cacheCapacity]) break;
             }
-            if (!reach[X]) return false;
+            if (!reachable[cacheCapacity]) return false;
 
-            boolean[] used = new boolean[ns];
-            int w = X;
-            while (w > 0) {
-                int i = byItem[w];
-                if (i < 0) return false;
-                used[i] = true;
-                addTo(b, sample[i]);
-                w -= in.videoSize[sample[i]];
+            boolean[] used = new boolean[sampleCount];
+            int sum = cacheCapacity;
+            while (sum > 0) {
+                int item = lastItemForSum[sum];
+                if (item < 0) return false;
+                used[item] = true;
+                addToCache(cache, sample[item]);
+                sum -= problem.videoSize[sample[item]];
             }
 
-            int write = nPool - ns;
-            for (int i = 0; i < ns; i++) if (!used[i]) pool[write++] = sample[i];
-            nPool = write;
+            int writeIndex = poolCount - sampleCount;
+            for (int i = 0; i < sampleCount; i++) if (!used[i]) pool[writeIndex++] = sample[i];
+            poolCount = writeIndex;
         }
-        return nPool == 0;
+        return poolCount == 0;
     }
 
-    private void pack(long budgetMs, boolean verbose) {
-        long deadline = System.nanoTime() + budgetMs * 1_000_000L;
+    private void packWithRepairs(long budgetMs, boolean verbose) {
+        long deadlineNanos = System.nanoTime() + budgetMs * 1_000_000L;
         Random rng = new Random(20170223L);
 
-        Integer[] boxed = new Integer[V];
-        for (int i = 0; i < V; i++) boxed[i] = i;
-        java.util.Arrays.sort(boxed, (a, b) -> in.videoSize[b] - in.videoSize[a]);
-        int[] bySize = new int[V];
-        for (int i = 0; i < V; i++) bySize[i] = boxed[i];
+        Integer[] boxedVideos = new Integer[videoCount];
+        for (int i = 0; i < videoCount; i++) boxedVideos[i] = i;
+        java.util.Arrays.sort(boxedVideos, (first, second) -> problem.videoSize[second] - problem.videoSize[first]);
+        int[] videosBySizeDescending = new int[videoCount];
+        for (int i = 0; i < videoCount; i++) videosBySizeDescending[i] = boxedVideos[i];
 
-        for (int i = 0; i < V; i++) {
-            int v = bySize[i], b = bestFit(v);
-            if (b >= 0) addTo(b, v);
-            else { unplaced[nUnplaced++] = v; unplacedWeight += weight[v]; }
+        for (int i = 0; i < videoCount; i++) {
+            int video = videosBySizeDescending[i], cache = bestFitCache(video);
+            if (cache >= 0) addToCache(cache, video);
+            else { unplacedVideos[unplacedCount++] = video; unplacedRequestWeight += videoRequestWeight[video]; }
         }
         long totalSize = 0;
-        for (int v = 0; v < V; v++) totalSize += in.videoSize[v];
+        for (int video = 0; video < videoCount; video++) totalSize += problem.videoSize[video];
         if (verbose)
             System.out.printf("  BFD : %d videos non placees, gaspillage %d Mo (capacite=%d, somme=%d)%n",
-                    nUnplaced, sumRem(), (long) C * X, totalSize);
+                    unplacedCount, totalRemainingCapacity(), (long) cacheCount * cacheCapacity, totalSize);
 
-        int iters = 0;
-        while (nUnplaced > 0 && System.nanoTime() < deadline) {
+        int randomRepairIterations = 0;
+        while (unplacedCount > 0 && System.nanoTime() < deadlineNanos) {
         boolean progress = true;
-        while (nUnplaced > 0 && progress && System.nanoTime() < deadline) {
+        while (unplacedCount > 0 && progress && System.nanoTime() < deadlineNanos) {
             progress = false;
-            for (int ui = 0; ui < nUnplaced && !progress; ui++) {
-                int u = unplaced[ui], su = in.videoSize[u];
-                for (int b = 0; b < C && !progress; b++) {
-                    if (rem[b] >= su) continue;
-                    if (X - su < 0) continue;
+            for (int unplacedIndex = 0; unplacedIndex < unplacedCount && !progress; unplacedIndex++) {
+                int unplacedVideo = unplacedVideos[unplacedIndex], unplacedSize = problem.videoSize[unplacedVideo];
+                for (int cache = 0; cache < cacheCount && !progress; cache++) {
+                    if (remainingCapacity[cache] >= unplacedSize) continue;
+                    if (cacheCapacity - unplacedSize < 0) continue;
 
-                    for (int k = binCount[b] - 1; k >= 0 && rem[b] < su; k--) {
-                        int x = binItems[b][k];
-                        int sx = in.videoSize[x], dest = -1, bestRem = Integer.MAX_VALUE;
-                        for (int b2 = 0; b2 < C; b2++)
-                            if (b2 != b && rem[b2] >= sx && rem[b2] - sx < bestRem) {
-                                bestRem = rem[b2] - sx; dest = b2;
+                    for (int position = videoCountInCache[cache] - 1; position >= 0 && remainingCapacity[cache] < unplacedSize; position--) {
+                        int movedVideo = videosInCache[cache][position];
+                        int movedSize = problem.videoSize[movedVideo], destination = -1, bestLeftover = Integer.MAX_VALUE;
+                        for (int otherCache = 0; otherCache < cacheCount; otherCache++)
+                            if (otherCache != cache && remainingCapacity[otherCache] >= movedSize && remainingCapacity[otherCache] - movedSize < bestLeftover) {
+                                bestLeftover = remainingCapacity[otherCache] - movedSize; destination = otherCache;
                             }
-                        if (dest >= 0) { removeFrom(x); addTo(dest, x); k = binCount[b]; }
+                        if (destination >= 0) { removeFromCache(movedVideo); addToCache(destination, movedVideo); position = videoCountInCache[cache]; }
                     }
-                    if (rem[b] >= su) {
-                        addTo(b, u);
-                        unplaced[ui] = unplaced[--nUnplaced];
-                        unplacedWeight -= weight[u];
+                    if (remainingCapacity[cache] >= unplacedSize) {
+                        addToCache(cache, unplacedVideo);
+                        unplacedVideos[unplacedIndex] = unplacedVideos[--unplacedCount];
+                        unplacedRequestWeight -= videoRequestWeight[unplacedVideo];
                         progress = true;
                     }
 
@@ -188,30 +188,30 @@ public final class BinPacking {
             }
 
             if (!progress) {
-                for (int ui = 0; ui < nUnplaced && !progress; ui++) {
-                    int u = unplaced[ui], su = in.videoSize[u];
-                    for (int b = 0; b < C && !progress; b++) {
+                for (int unplacedIndex = 0; unplacedIndex < unplacedCount && !progress; unplacedIndex++) {
+                    int unplacedVideo = unplacedVideos[unplacedIndex], unplacedSize = problem.videoSize[unplacedVideo];
+                    for (int cache = 0; cache < cacheCount && !progress; cache++) {
                         boolean moved = true;
-                        while (rem[b] < su && moved && System.nanoTime() < deadline) {
+                        while (remainingCapacity[cache] < unplacedSize && moved && System.nanoTime() < deadlineNanos) {
                             moved = false;
-                            for (int ix = 0; ix < binCount[b] && !moved; ix++) {
-                                int x = binItems[b][ix], sx = in.videoSize[x];
-                                for (int b2 = 0; b2 < C && !moved; b2++) {
-                                    if (b2 == b) continue;
-                                    for (int iy = 0; iy < binCount[b2]; iy++) {
-                                        int y = binItems[b2][iy], d = sx - in.videoSize[y];
-                                        if (d <= 0 || d > rem[b2]) continue;
-                                        removeFrom(x); removeFrom(y);
-                                        addTo(b2, x); addTo(b, y);
+                            for (int positionX = 0; positionX < videoCountInCache[cache] && !moved; positionX++) {
+                                int videoX = videosInCache[cache][positionX], sizeX = problem.videoSize[videoX];
+                                for (int otherCache = 0; otherCache < cacheCount && !moved; otherCache++) {
+                                    if (otherCache == cache) continue;
+                                    for (int positionY = 0; positionY < videoCountInCache[otherCache]; positionY++) {
+                                        int videoY = videosInCache[otherCache][positionY], sizeDifference = sizeX - problem.videoSize[videoY];
+                                        if (sizeDifference <= 0 || sizeDifference > remainingCapacity[otherCache]) continue;
+                                        removeFromCache(videoX); removeFromCache(videoY);
+                                        addToCache(otherCache, videoX); addToCache(cache, videoY);
                                         moved = true; break;
                                     }
                                 }
                             }
                         }
-                        if (rem[b] >= su) {
-                            addTo(b, u);
-                            unplaced[ui] = unplaced[--nUnplaced];
-                            unplacedWeight -= weight[u];
+                        if (remainingCapacity[cache] >= unplacedSize) {
+                            addToCache(cache, unplacedVideo);
+                            unplacedVideos[unplacedIndex] = unplacedVideos[--unplacedCount];
+                            unplacedRequestWeight -= videoRequestWeight[unplacedVideo];
                             progress = true;
                         }
                     }
@@ -219,24 +219,24 @@ public final class BinPacking {
             }
 
             if (!progress) {
-                for (int ui = 0; ui < nUnplaced && !progress; ui++) {
-                    int u = unplaced[ui], su = in.videoSize[u];
-                    for (int b = 0; b < C && !progress; b++) {
-                        int need = su - rem[b];
-                        if (need <= 0) continue;
-                        for (int ix = 0; ix < binCount[b] && !progress; ix++) {
-                            int x = binItems[b][ix], sx = in.videoSize[x];
-                            if (sx < need) continue;
-                            for (int b2 = 0; b2 < C && !progress; b2++) {
-                                if (b2 == b) continue;
-                                for (int iy = 0; iy < binCount[b2]; iy++) {
-                                    int y = binItems[b2][iy], d = sx - in.videoSize[y];
-                                    if (d < need || d > rem[b2]) continue;
-                                    removeFrom(x); removeFrom(y);
-                                    addTo(b2, x); addTo(b, y);
-                                    addTo(b, u);
-                                    unplaced[ui] = unplaced[--nUnplaced];
-                                    unplacedWeight -= weight[u];
+                for (int unplacedIndex = 0; unplacedIndex < unplacedCount && !progress; unplacedIndex++) {
+                    int unplacedVideo = unplacedVideos[unplacedIndex], unplacedSize = problem.videoSize[unplacedVideo];
+                    for (int cache = 0; cache < cacheCount && !progress; cache++) {
+                        int neededSpace = unplacedSize - remainingCapacity[cache];
+                        if (neededSpace <= 0) continue;
+                        for (int positionX = 0; positionX < videoCountInCache[cache] && !progress; positionX++) {
+                            int videoX = videosInCache[cache][positionX], sizeX = problem.videoSize[videoX];
+                            if (sizeX < neededSpace) continue;
+                            for (int otherCache = 0; otherCache < cacheCount && !progress; otherCache++) {
+                                if (otherCache == cache) continue;
+                                for (int positionY = 0; positionY < videoCountInCache[otherCache]; positionY++) {
+                                    int videoY = videosInCache[otherCache][positionY], sizeDifference = sizeX - problem.videoSize[videoY];
+                                    if (sizeDifference < neededSpace || sizeDifference > remainingCapacity[otherCache]) continue;
+                                    removeFromCache(videoX); removeFromCache(videoY);
+                                    addToCache(otherCache, videoX); addToCache(cache, videoY);
+                                    addToCache(cache, unplacedVideo);
+                                    unplacedVideos[unplacedIndex] = unplacedVideos[--unplacedCount];
+                                    unplacedRequestWeight -= videoRequestWeight[unplacedVideo];
                                     progress = true;
                                     break;
                                 }
@@ -246,64 +246,63 @@ public final class BinPacking {
                 }
             }
         }
-        if (nUnplaced == 0) break;
+        if (unplacedCount == 0) break;
 
-        int[] undoV = new int[64]; int[] undoB = new int[64];
-        long phaseEnd = Math.min(deadline, System.nanoTime() + 3_000_000_000L);
-        while (nUnplaced > 0 && System.nanoTime() < phaseEnd) {
-            iters++;
-            int ui = rng.nextInt(nUnplaced);
-            int u = unplaced[ui];
-            int su = in.videoSize[u];
-            int b = rng.nextInt(C);
+        int[] undoVideos = new int[64]; int[] undoCaches = new int[64];
+        long phaseEndNanos = Math.min(deadlineNanos, System.nanoTime() + 3_000_000_000L);
+        while (unplacedCount > 0 && System.nanoTime() < phaseEndNanos) {
+            randomRepairIterations++;
+            int unplacedIndex = rng.nextInt(unplacedCount);
+            int unplacedVideo = unplacedVideos[unplacedIndex];
+            int unplacedSize = problem.videoSize[unplacedVideo];
+            int cache = rng.nextInt(cacheCount);
 
-            int nUndo = 0;
-            long before = unplacedWeight;
+            int undoCount = 0;
+            long weightBefore = unplacedRequestWeight;
 
             int guard = 0;
-            while (rem[b] < su && binCount[b] > 0 && guard++ < 32) {
-                int x = binItems[b][rng.nextInt(binCount[b])];
-                if (nUndo == undoV.length) {
-                    undoV = java.util.Arrays.copyOf(undoV, nUndo * 2);
-                    undoB = java.util.Arrays.copyOf(undoB, nUndo * 2);
+            while (remainingCapacity[cache] < unplacedSize && videoCountInCache[cache] > 0 && guard++ < 32) {
+                int evictedVideo = videosInCache[cache][rng.nextInt(videoCountInCache[cache])];
+                if (undoCount == undoVideos.length) {
+                    undoVideos = java.util.Arrays.copyOf(undoVideos, undoCount * 2);
+                    undoCaches = java.util.Arrays.copyOf(undoCaches, undoCount * 2);
                 }
-                undoV[nUndo] = x; undoB[nUndo] = b; nUndo++;
-                removeFrom(x);
+                undoVideos[undoCount] = evictedVideo; undoCaches[undoCount] = cache; undoCount++;
+                removeFromCache(evictedVideo);
             }
-            if (rem[b] < su) { restore(undoV, undoB, nUndo); continue; }
+            if (remainingCapacity[cache] < unplacedSize) { restore(undoVideos, undoCaches, undoCount); continue; }
 
-            addTo(b, u);
-            unplaced[ui] = unplaced[--nUnplaced];
-            unplacedWeight -= weight[u];
+            addToCache(cache, unplacedVideo);
+            unplacedVideos[unplacedIndex] = unplacedVideos[--unplacedCount];
+            unplacedRequestWeight -= videoRequestWeight[unplacedVideo];
 
-            int firstNew = nUnplaced;
-            for (int i = 0; i < nUndo; i++) {
-                int x = undoV[i], nb = bestFit(x);
-                if (nb >= 0) addTo(nb, x);
-                else { unplaced[nUnplaced++] = x; unplacedWeight += weight[x]; }
+            int firstNewUnplaced = unplacedCount;
+            for (int i = 0; i < undoCount; i++) {
+                int evictedVideo = undoVideos[i], newCache = bestFitCache(evictedVideo);
+                if (newCache >= 0) addToCache(newCache, evictedVideo);
+                else { unplacedVideos[unplacedCount++] = evictedVideo; unplacedRequestWeight += videoRequestWeight[evictedVideo]; }
             }
 
-            if (unplacedWeight > before) {
+            if (unplacedRequestWeight > weightBefore) {
 
-                for (int i = nUnplaced - 1; i >= firstNew; i--) unplacedWeight -= weight[unplaced[i]];
-                nUnplaced = firstNew;
-                for (int i = 0; i < nUndo; i++) if (binOf[undoV[i]] >= 0) removeFrom(undoV[i]);
-                removeFrom(u);
-                unplaced[nUnplaced++] = u; unplacedWeight += weight[u];
-                restore(undoV, undoB, nUndo);
+                for (int i = unplacedCount - 1; i >= firstNewUnplaced; i--) unplacedRequestWeight -= videoRequestWeight[unplacedVideos[i]];
+                unplacedCount = firstNewUnplaced;
+                for (int i = 0; i < undoCount; i++) if (cacheOfVideo[undoVideos[i]] >= 0) removeFromCache(undoVideos[i]);
+                removeFromCache(unplacedVideo);
+                unplacedVideos[unplacedCount++] = unplacedVideo; unplacedRequestWeight += videoRequestWeight[unplacedVideo];
+                restore(undoVideos, undoCaches, undoCount);
             }
         }
         }
         if (verbose)
             System.out.printf("  reparation : %d iterations -> %d non placees, gaspillage %d Mo%n",
-                    iters, nUnplaced, sumRem());
+                    randomRepairIterations, unplacedCount, totalRemainingCapacity());
     }
 
-    private void restore(int[] v, int[] b, int n) {
-        for (int i = 0; i < n; i++)
-            if (binOf[v[i]] < 0 && rem[b[i]] >= in.videoSize[v[i]]) addTo(b[i], v[i]);
+    private void restore(int[] videos, int[] caches, int count) {
+        for (int i = 0; i < count; i++)
+            if (cacheOfVideo[videos[i]] < 0 && remainingCapacity[caches[i]] >= problem.videoSize[videos[i]]) addToCache(caches[i], videos[i]);
     }
 
-    private int sumRem() { int s = 0; for (int b = 0; b < C; b++) s += rem[b]; return s; }
+    private int totalRemainingCapacity() { int total = 0; for (int cache = 0; cache < cacheCount; cache++) total += remainingCapacity[cache]; return total; }
 }
-

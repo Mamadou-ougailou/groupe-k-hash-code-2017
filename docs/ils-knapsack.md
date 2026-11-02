@@ -24,7 +24,7 @@ plus de cœurs, l'ILS coopératif a plus de kicks à fusionner). La colonne « G
 
 ## Utilisation
 
-Le solveur est branché dans `GoogleHash2017` via `solver.impl.ILSSolver` :
+Le solveur est branché dans `GoogleHash2017` via `solver.impl.GreedyKnapsackIlsSolver` :
 
 ```bash
 make compile
@@ -38,15 +38,15 @@ le nombre de threads de l'ILS. `make instances/kittens.in` marche aussi (budget 
 
 | Fichier | Rôle |
 |---|---|
-| `src/solver/ils/Instance.java` | Parser sur `byte[]`, listes d'adjacence CSR + matrice de latence (`-1` = non connecté), requêtes triées par endpoint, CSR cache → endpoints |
+| `src/solver/ils/FlatProblem.java` | Parser sur `byte[]`, listes d'adjacence CSR + matrice de latence (`-1` = non connecté), requêtes triées par endpoint, CSR cache → endpoints |
 | `src/solver/ils/Solution.java` | Contenu des caches en bitset plat, capacités, validateur, écriture soumission |
 | `src/solver/ils/Scorer.java` | Scorer **indépendant** (recalcul intégral) + borne supérieure |
-| `src/solver/ils/Book.java` | Le carnet `best1` / `best2` / `arg1` — évaluations en O(1) |
-| `src/solver/ils/Greedy.java` | Glouton paresseux CELF, tas binaire sans autoboxing |
+| `src/solver/ils/BestLatencyTracker.java` | Le suivi `bestLatency` / `secondBestLatency` / `bestCache` — évaluations en O(1) |
+| `src/solver/ils/LazyGreedyPlacement.java` | Glouton paresseux CELF, tas binaire sans autoboxing |
 | `src/solver/ils/BlockKnapsack.java` | Descente par blocs, sous-problème résolu **exactement** par sac à dos (fixation par coûts réduits + DP sur le cœur) |
-| `src/solver/ils/ILS.java` | Recherche locale itérée : kicks sur caches voisins avec annulation, fusion coopérative des threads (marche indépendante pour ≤ 32 caches) |
+| `src/solver/ils/IteratedLocalSearch.java` | Recherche locale itérée : kicks sur caches voisins avec annulation, fusion coopérative des threads (marche indépendante pour ≤ 32 caches) |
 | `src/solver/ils/BinPacking.java` | Subset-sum exact pour les instances dégénérées |
-| `src/solver/impl/ILSSolver.java` | Adaptateur `Solver` : `Problem` → `Instance`, pipeline + jalons de vérification, réécriture des caches dans `Problem` |
+| `src/solver/impl/GreedyKnapsackIlsSolver.java` | Adaptateur `Solver` : `Problem` → `FlatProblem`, pipeline + jalons de vérification, réécriture des caches dans `Problem` |
 
 ## Les idées qui portent le score
 
@@ -120,7 +120,7 @@ ne parcourant que les requêtes des endpoints reliés au cache (requêtes triée
 
 ### 3 bis. Recherche locale itérée : voisinage, annulation, fusion
 
-Après la descente, chaque cache est optimal isolément. `ILS.java` cherche des améliorations
+Après la descente, chaque cache est optimal isolément. `IteratedLocalSearch.java` cherche des améliorations
 qui demandent de modifier plusieurs caches à la fois :
 
 - **Kick local** : on vide 1 à 2 caches *voisins* (qui partagent des endpoints — eux seuls

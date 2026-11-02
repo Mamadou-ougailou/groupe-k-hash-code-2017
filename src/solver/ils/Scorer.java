@@ -2,36 +2,35 @@ package solver.ils;
 
 public final class Scorer {
 
-    public static long score(Instance in, Solution s) {
-        long num = 0;
-        for (int r = 0; r < in.R; r++) {
-            int e = in.reqEndpoint[r];
-            int v = in.reqVideo[r];
-            int best = in.dcLatency[e];
-            for (int i = in.epStart[e]; i < in.epStart[e + 1]; i++) {
-                int l = in.epLat[i];
-                if (l < best && s.has(in.epCache[i], v)) best = l;
+    public static long score(FlatProblem problem, Solution solution) {
+        long totalSavedLatency = 0;
+        for (int request = 0; request < problem.requestCount; request++) {
+            int endpoint = problem.requestEndpoint[request];
+            int video = problem.requestVideo[request];
+            int bestLatency = problem.dataCenterLatency[endpoint];
+            for (int link = problem.endpointLinkStart[endpoint]; link < problem.endpointLinkStart[endpoint + 1]; link++) {
+                int cacheLatency = problem.linkLatency[link];
+                if (cacheLatency < bestLatency && solution.contains(problem.linkedCache[link], video)) bestLatency = cacheLatency;
             }
-            num += (long) in.reqCount[r] * (in.dcLatency[e] - best);
+            totalSavedLatency += (long) problem.requestViewCount[request] * (problem.dataCenterLatency[endpoint] - bestLatency);
         }
-        return num * 1000L / in.totalRequests;
+        return totalSavedLatency * 1000L / problem.totalRequests;
     }
 
-    public static long upperBound(Instance in) {
-        long num = 0;
-        for (int r = 0; r < in.R; r++) {
-            int e = in.reqEndpoint[r];
-            int best = in.dcLatency[e];
-            for (int i = in.epStart[e]; i < in.epStart[e + 1]; i++)
-                if (in.epLat[i] < best) best = in.epLat[i];
-            num += (long) in.reqCount[r] * (in.dcLatency[e] - best);
+    public static long upperBound(FlatProblem problem) {
+        long totalSavedLatency = 0;
+        for (int request = 0; request < problem.requestCount; request++) {
+            int endpoint = problem.requestEndpoint[request];
+            int bestLatency = problem.dataCenterLatency[endpoint];
+            for (int link = problem.endpointLinkStart[endpoint]; link < problem.endpointLinkStart[endpoint + 1]; link++)
+                if (problem.linkLatency[link] < bestLatency) bestLatency = problem.linkLatency[link];
+            totalSavedLatency += (long) problem.requestViewCount[request] * (problem.dataCenterLatency[endpoint] - bestLatency);
         }
-        return num * 1000L / in.totalRequests;
+        return totalSavedLatency * 1000L / problem.totalRequests;
     }
 
-    public static long validateAndScore(Instance in, Solution s) {
-        s.validateOrThrow();
-        return score(in, s);
+    public static long validateAndScore(FlatProblem problem, Solution solution) {
+        solution.validateOrThrow();
+        return score(problem, solution);
     }
 }
-

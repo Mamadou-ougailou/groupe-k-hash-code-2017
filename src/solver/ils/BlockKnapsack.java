@@ -4,217 +4,216 @@ import java.util.Arrays;
 
 public final class BlockKnapsack {
 
-    private final Instance in;
-    private final Solution sol;
-    private final Book book;
+    private final FlatProblem problem;
+    private final Solution solution;
+    private final BestLatencyTracker tracker;
 
-    private final long[] gain;
+    private final long[] videoGain;
     private final long[] sortKey;
-    private final int[]  ord;
-    private final int[]  core;
+    private final int[]  videosByDensity;
+    private final int[]  coreVideos;
     public static final int MAX_DP_CAP = 2_000_000;
 
-    private final int[]  chosen;
-    private final int[]  gsel;
-    private final int[]  prev;
-    private long[]       dp;
-    private long[]       take;
-    private final int    vBits;
-    private final long   vMask;
+    private final int[]  chosenVideos;
+    private final int[]  greedySelection;
+    private final int[]  previousVideos;
+    private long[]       bestValueByCapacity;
+    private long[]       takenBits;
+    private final int    videoIdBits;
+    private final long   videoIdMask;
 
     public long fallbacks;
 
-    public BlockKnapsack(Instance in, Solution sol, Book book) {
-        this.in = in; this.sol = sol; this.book = book;
-        gain    = new long[in.V];
-        sortKey = new long[in.V];
-        ord     = new int[in.V];
-        core    = new int[in.V];
-        chosen  = new int[in.V];
-        gsel    = new int[in.V];
-        prev    = new int[in.V];
-        dp      = new long[Math.min(in.X + 1, 1024)];
-        take    = new long[1024];
-        vBits   = 32 - Integer.numberOfLeadingZeros(Math.max(1, in.V - 1));
-        vMask   = (1L << vBits) - 1;
+    public BlockKnapsack(FlatProblem problem, Solution solution, BestLatencyTracker tracker) {
+        this.problem = problem; this.solution = solution; this.tracker = tracker;
+        videoGain       = new long[problem.videoCount];
+        sortKey         = new long[problem.videoCount];
+        videosByDensity = new int[problem.videoCount];
+        coreVideos      = new int[problem.videoCount];
+        chosenVideos    = new int[problem.videoCount];
+        greedySelection = new int[problem.videoCount];
+        previousVideos  = new int[problem.videoCount];
+        bestValueByCapacity = new long[Math.min(problem.cacheCapacity + 1, 1024)];
+        takenBits       = new long[1024];
+        videoIdBits     = 32 - Integer.numberOfLeadingZeros(Math.max(1, problem.videoCount - 1));
+        videoIdMask     = (1L << videoIdBits) - 1;
     }
 
-    public void sweep(int[] order) { sweep(order, Long.MAX_VALUE); }
+    public void sweep(int[] cacheOrder) { sweep(cacheOrder, Long.MAX_VALUE); }
 
-    public void sweep(int[] order, long deadlineNs) { sweep(order, order.length, deadlineNs); }
+    public void sweep(int[] cacheOrder, long deadlineNs) { sweep(cacheOrder, cacheOrder.length, deadlineNs); }
 
-    public void sweep(int[] order, int len, long deadlineNs) {
-        for (int i = 0; i < len; i++) {
-            optimizeCache(order[i]);
+    public void sweep(int[] cacheOrder, int length, long deadlineNs) {
+        for (int i = 0; i < length; i++) {
+            optimizeCache(cacheOrder[i]);
             if ((i & 15) == 15 && System.nanoTime() > deadlineNs) return;
         }
     }
 
-    public int snapshot(int c, int[] out) {
-        int n = 0;
-        for (int v = 0; v < in.V; v++) if (sol.has(c, v)) out[n++] = v;
-        return n;
+    public int snapshot(int cache, int[] snapshotOut) {
+        int count = 0;
+        for (int video = 0; video < problem.videoCount; video++) if (solution.contains(cache, video)) snapshotOut[count++] = video;
+        return count;
     }
 
-    public void restore(int c, int[] snap, int n) {
-        clearCacheAndUpdate(c);
-        for (int i = 0; i < n; i++) place(c, snap[i]);
+    public void restore(int cache, int[] snapshot, int count) {
+        clearCacheAndUpdate(cache);
+        for (int i = 0; i < count; i++) place(cache, snapshot[i]);
     }
 
-    public int clearCacheAndUpdate(int c) {
-        final int V = in.V, C = in.C;
-        int nPrev = 0;
-        for (int v = 0; v < V; v++) if (sol.has(c, v)) prev[nPrev++] = v;
-        if (nPrev == 0) return 0;
-        for (int i = 0; i < nPrev; i++) sol.remove(c, prev[i]);
+    public int clearCacheAndUpdate(int cache) {
+        final int videoCount = problem.videoCount, cacheCount = problem.cacheCount;
+        int previousCount = 0;
+        for (int video = 0; video < videoCount; video++) if (solution.contains(cache, video)) previousVideos[previousCount++] = video;
+        if (previousCount == 0) return 0;
+        for (int i = 0; i < previousCount; i++) solution.remove(cache, previousVideos[i]);
 
-        for (int i = 0; i < nPrev; i++) {
-            int v = prev[i];
-            for (int j = in.vidStart[v]; j < in.vidStart[v + 1]; j++) {
-                int r = in.vidReq[j];
-                if (in.lat[in.reqEndpoint[r] * C + c] >= 0) book.recompute(r, sol);
+        for (int i = 0; i < previousCount; i++) {
+            int video = previousVideos[i];
+            for (int j = problem.videoRequestStart[video]; j < problem.videoRequestStart[video + 1]; j++) {
+                int request = problem.videoRequestIds[j];
+                if (problem.latencyMatrix[problem.requestEndpoint[request] * cacheCount + cache] >= 0) tracker.recomputeRequest(request, solution);
             }
         }
-        return nPrev;
+        return previousCount;
     }
 
-    public void optimizeCache(int c) { optimizeCache(c, 0.0, null); }
+    public void optimizeCache(int cache) { optimizeCache(cache, 0.0, null); }
 
-    public void optimizeCache(int c, double noise, java.util.Random rng) {
-        final int V = in.V, X = in.X;
-        final int[] size = in.videoSize;
+    public void optimizeCache(int cache, double noise, java.util.Random rng) {
+        final int videoCount = problem.videoCount, cacheCapacity = problem.cacheCapacity;
+        final int[] size = problem.videoSize;
 
-        int nPrev = clearCacheAndUpdate(c);
+        int previousCount = clearCacheAndUpdate(cache);
 
-        Arrays.fill(gain, 0L);
-        final int[] best1 = book.best1;
-        final int[] rv = in.reqVideo, rn = in.reqCount;
-        for (int i = in.cEpStart[c], iEnd = in.cEpStart[c + 1]; i < iEnd; i++) {
-            int e = in.cEp[i], l = in.cEpLat[i];
-            for (int r = in.epReqStart[e], rEnd = in.epReqStart[e + 1]; r < rEnd; r++) {
-                int d = best1[r] - l;
-                if (d > 0) gain[rv[r]] += (long) rn[r] * d;
+        Arrays.fill(videoGain, 0L);
+        final int[] bestLatency = tracker.bestLatency;
+        final int[] requestVideo = problem.requestVideo, requestViewCount = problem.requestViewCount;
+        for (int i = problem.cacheLinkStart[cache], linksEnd = problem.cacheLinkStart[cache + 1]; i < linksEnd; i++) {
+            int endpoint = problem.cacheLinkedEndpoint[i], cacheLatency = problem.cacheLinkLatency[i];
+            for (int request = problem.endpointRequestStart[endpoint], requestsEnd = problem.endpointRequestStart[endpoint + 1]; request < requestsEnd; request++) {
+                int latencyGain = bestLatency[request] - cacheLatency;
+                if (latencyGain > 0) videoGain[requestVideo[request]] += (long) requestViewCount[request] * latencyGain;
             }
         }
         if (noise > 0) {
-            for (int v = 0; v < V; v++)
-                if (gain[v] > 0)
-                    gain[v] = Math.max(1L, (long) (gain[v] * (1.0 + noise * (2 * rng.nextDouble() - 1))));
+            for (int video = 0; video < videoCount; video++)
+                if (videoGain[video] > 0)
+                    videoGain[video] = Math.max(1L, (long) (videoGain[video] * (1.0 + noise * (2 * rng.nextDouble() - 1))));
         }
 
-        int n = 0;
-        for (int v = 0; v < V; v++) {
-            long g = gain[v];
-            if (g <= 0 || size[v] > X) continue;
-            long bits = Double.doubleToRawLongBits((double) g / size[v]);
-            sortKey[n++] = ((bits >>> vBits) << vBits) | v;
+        int candidateCount = 0;
+        for (int video = 0; video < videoCount; video++) {
+            long gain = videoGain[video];
+            if (gain <= 0 || size[video] > cacheCapacity) continue;
+            long densityBits = Double.doubleToRawLongBits((double) gain / size[video]);
+            sortKey[candidateCount++] = ((densityBits >>> videoIdBits) << videoIdBits) | video;
         }
-        if (n == 0) return;
-        Arrays.sort(sortKey, 0, n);
-        for (int k = 0; k < n; k++) ord[k] = (int) (sortKey[n - 1 - k] & vMask);
+        if (candidateCount == 0) return;
+        Arrays.sort(sortKey, 0, candidateCount);
+        for (int rank = 0; rank < candidateCount; rank++) videosByDensity[rank] = (int) (sortKey[candidateCount - 1 - rank] & videoIdMask);
 
-        long cumW = 0, cumP = 0;
-        int b = n;
-        for (int k = 0; k < n; k++) {
-            int v = ord[k];
-            if (cumW + size[v] > X) { b = k; break; }
-            cumW += size[v];
-            cumP += gain[v];
+        long cumulativeWeight = 0, cumulativeProfit = 0;
+        int breakIndex = candidateCount;
+        for (int rank = 0; rank < candidateCount; rank++) {
+            int video = videosByDensity[rank];
+            if (cumulativeWeight + size[video] > cacheCapacity) { breakIndex = rank; break; }
+            cumulativeWeight += size[video];
+            cumulativeProfit += videoGain[video];
         }
-        if (b == n) {
-            for (int k = 0; k < n; k++) place(c, ord[k]);
+        if (breakIndex == candidateCount) {
+            for (int rank = 0; rank < candidateCount; rank++) place(cache, videosByDensity[rank]);
             return;
         }
 
-        int ng = 0;
-        for (int k = 0; k < b; k++) gsel[ng++] = ord[k];
-        long gV = cumP, left = X - cumW;
-        for (int k = b; k < n && left > 0; k++) {
-            int v = ord[k];
-            if (size[v] <= left) { gsel[ng++] = v; left -= size[v]; gV += gain[v]; }
+        int greedyCount = 0;
+        for (int rank = 0; rank < breakIndex; rank++) greedySelection[greedyCount++] = videosByDensity[rank];
+        long greedyValue = cumulativeProfit, remainingCapacity = cacheCapacity - cumulativeWeight;
+        for (int rank = breakIndex; rank < candidateCount && remainingCapacity > 0; rank++) {
+            int video = videosByDensity[rank];
+            if (size[video] <= remainingCapacity) { greedySelection[greedyCount++] = video; remainingCapacity -= size[video]; greedyValue += videoGain[video]; }
         }
-        long pV = 0;
-        for (int i = 0; i < nPrev; i++) if (gain[prev[i]] > 0) pV += gain[prev[i]];
-        final long lb = Math.max(gV, pV);
+        long previousValue = 0;
+        for (int i = 0; i < previousCount; i++) if (videoGain[previousVideos[i]] > 0) previousValue += videoGain[previousVideos[i]];
+        final long lowerBound = Math.max(greedyValue, previousValue);
 
-        int vb = ord[b];
-        final double rb = (double) gain[vb] / size[vb];
-        final double ub = cumP + (double) (X - cumW) * rb;
-        final double lim = Math.max(0.0, ub - lb) + 1e-10 * ub + 1.0;
+        int breakVideo = videosByDensity[breakIndex];
+        final double breakDensity = (double) videoGain[breakVideo] / size[breakVideo];
+        final double upperBound = cumulativeProfit + (double) (cacheCapacity - cumulativeWeight) * breakDensity;
+        final double fixingMargin = Math.max(0.0, upperBound - lowerBound) + 1e-10 * upperBound + 1.0;
 
-        int nFix = 0, nCore = 0;
-        long fixW = 0, fixP = 0, coreW = 0;
-        for (int k = 0; k < n; k++) {
-            int v = ord[k];
-            double d = gain[v] - size[v] * rb;
-            if (d > lim)       { chosen[nFix++] = v; fixW += size[v]; fixP += gain[v]; }
-            else if (-d > lim) {  }
-            else               { core[nCore++] = v; coreW += size[v]; }
+        int fixedCount = 0, coreCount = 0;
+        long fixedWeight = 0, fixedProfit = 0, coreWeight = 0;
+        for (int rank = 0; rank < candidateCount; rank++) {
+            int video = videosByDensity[rank];
+            double reducedCost = videoGain[video] - size[video] * breakDensity;
+            if (reducedCost > fixingMargin)       { chosenVideos[fixedCount++] = video; fixedWeight += size[video]; fixedProfit += videoGain[video]; }
+            else if (-reducedCost > fixingMargin) {  }
+            else                                  { coreVideos[coreCount++] = video; coreWeight += size[video]; }
         }
-        final long capL = X - fixW;
+        final long coreCapacityLong = cacheCapacity - fixedWeight;
 
-        boolean ok = capL >= 0;
-        int nCh = nFix;
-        if (ok) {
-            int cap = (int) capL;
-            if (coreW <= cap) {
-                for (int i = 0; i < nCore; i++) chosen[nCh++] = core[i];
-                ok = fixP + sumGain(core, nCore) >= lb;
-            } else if (cap > MAX_DP_CAP) {
-                ok = false;
+        boolean solved = coreCapacityLong >= 0;
+        int chosenCount = fixedCount;
+        if (solved) {
+            int coreCapacity = (int) coreCapacityLong;
+            if (coreWeight <= coreCapacity) {
+                for (int i = 0; i < coreCount; i++) chosenVideos[chosenCount++] = coreVideos[i];
+                solved = fixedProfit + sumGain(coreVideos, coreCount) >= lowerBound;
+            } else if (coreCapacity > MAX_DP_CAP) {
+                solved = false;
             } else {
 
-                final int words = (cap + 64) >>> 6;
-                final int need = nCore * words;
-                if (take.length < need) take = new long[need];
-                if (dp.length < cap + 1) dp = new long[cap + 1];
-                Arrays.fill(take, 0, need, 0L);
-                Arrays.fill(dp, 0, cap + 1, 0L);
-                for (int i = 0; i < nCore; i++) {
-                    int v = core[i];
-                    int wi = size[v];
-                    long vi = gain[v];
-                    int base = i * words;
-                    for (int w = cap; w >= wi; w--) {
-                        long cand = dp[w - wi] + vi;
-                        if (cand > dp[w]) {
-                            dp[w] = cand;
-                            take[base + (w >>> 6)] |= 1L << w;
+                final int wordsPerItem = (coreCapacity + 64) >>> 6;
+                final int bitsNeeded = coreCount * wordsPerItem;
+                if (takenBits.length < bitsNeeded) takenBits = new long[bitsNeeded];
+                if (bestValueByCapacity.length < coreCapacity + 1) bestValueByCapacity = new long[coreCapacity + 1];
+                Arrays.fill(takenBits, 0, bitsNeeded, 0L);
+                Arrays.fill(bestValueByCapacity, 0, coreCapacity + 1, 0L);
+                for (int i = 0; i < coreCount; i++) {
+                    int video = coreVideos[i];
+                    int itemWeight = size[video];
+                    long itemProfit = videoGain[video];
+                    int wordBase = i * wordsPerItem;
+                    for (int capacity = coreCapacity; capacity >= itemWeight; capacity--) {
+                        long candidateValue = bestValueByCapacity[capacity - itemWeight] + itemProfit;
+                        if (candidateValue > bestValueByCapacity[capacity]) {
+                            bestValueByCapacity[capacity] = candidateValue;
+                            takenBits[wordBase + (capacity >>> 6)] |= 1L << capacity;
                         }
                     }
                 }
-                ok = fixP + dp[cap] >= lb;
-                if (ok) {
-                    int w = cap;
-                    for (int i = nCore - 1; i >= 0; i--) {
-                        if ((take[i * words + (w >>> 6)] & (1L << w)) != 0) {
-                            int v = core[i];
-                            chosen[nCh++] = v;
-                            w -= size[v];
+                solved = fixedProfit + bestValueByCapacity[coreCapacity] >= lowerBound;
+                if (solved) {
+                    int capacity = coreCapacity;
+                    for (int i = coreCount - 1; i >= 0; i--) {
+                        if ((takenBits[i * wordsPerItem + (capacity >>> 6)] & (1L << capacity)) != 0) {
+                            int video = coreVideos[i];
+                            chosenVideos[chosenCount++] = video;
+                            capacity -= size[video];
                         }
                     }
                 }
             }
         }
 
-        if (ok) {
-            for (int i = 0; i < nCh; i++) place(c, chosen[i]);
+        if (solved) {
+            for (int i = 0; i < chosenCount; i++) place(cache, chosenVideos[i]);
         } else {
             fallbacks++;
-            if (gV >= pV) for (int i = 0; i < ng; i++) place(c, gsel[i]);
-            else for (int i = 0; i < nPrev; i++) if (gain[prev[i]] > 0) place(c, prev[i]);
+            if (greedyValue >= previousValue) for (int i = 0; i < greedyCount; i++) place(cache, greedySelection[i]);
+            else for (int i = 0; i < previousCount; i++) if (videoGain[previousVideos[i]] > 0) place(cache, previousVideos[i]);
         }
     }
 
-    private long sumGain(int[] a, int n) {
-        long s = 0;
-        for (int i = 0; i < n; i++) s += gain[a[i]];
-        return s;
+    private long sumGain(int[] videos, int count) {
+        long sum = 0;
+        for (int i = 0; i < count; i++) sum += videoGain[videos[i]];
+        return sum;
     }
 
-    private void place(int c, int v) {
-        sol.add(c, v);
-        book.onAdd(c, v);
+    private void place(int cache, int video) {
+        solution.add(cache, video);
+        tracker.onVideoAdded(cache, video);
     }
 }
-
